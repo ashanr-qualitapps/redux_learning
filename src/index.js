@@ -10,6 +10,17 @@ import { ReselectComponent, BasicReselectComponent, ParameterizedSelectorsCompon
 import './index.css';
 import './styles.css';
 
+// Import our new advanced topic components
+import { 
+  ReReselectComponent,
+  DynamicReducersComponent,
+  ReduxToolkitComponent,
+  ImmutablePatternsComponent,
+  TestingReduxComponent,
+  TypeScriptIntegrationComponent,
+  SSRReduxComponent
+} from './components/AdvancedTopics';
+
 const coreReduxConcepts = [
   {
     id: 'actions',
@@ -43,6 +54,7 @@ const coreReduxConcepts = [
   },
 ];
 
+// Add advanced topics to the array
 const advancedReduxTopics = [
   {
     id: 'redux-thunk',
@@ -68,6 +80,41 @@ const advancedReduxTopics = [
     id: 'reselect',
     concept: 'Reselect and Memoization',
     description: 'Performance optimization with memoized selectors',
+  },
+  {
+    id: 're-reselect',
+    concept: 'Advanced: Caching with re-reselect',
+    description: 'Enhanced selector caching for complex applications',
+  },
+  {
+    id: 'dynamic-reducers',
+    concept: 'Code Splitting and Dynamic Reducers',
+    description: 'Loading Redux modules on demand',
+  },
+  {
+    id: 'redux-toolkit',
+    concept: 'Redux Toolkit',
+    description: 'Official, opinionated toolset for Redux development',
+  },
+  {
+    id: 'immutable-patterns',
+    concept: 'Immutable Update Patterns',
+    description: 'Techniques for maintaining state immutability',
+  },
+  {
+    id: 'testing-redux',
+    concept: 'Testing Redux Logic',
+    description: 'Best practices for testing Redux code',
+  },
+  {
+    id: 'typescript',
+    concept: 'Integration with TypeScript',
+    description: 'Adding static typing to Redux applications',
+  },
+  {
+    id: 'ssr',
+    concept: 'Server-Side Rendering with Redux',
+    description: 'Rendering Redux apps on the server',
   }
 ];
 
@@ -134,15 +181,35 @@ const ConceptTable = ({ concepts, title }) => (
 );
 
 const HomePage = () => {
+  // Group advanced topics for better organization
+  const middlewareTopics = advancedReduxTopics.filter(topic => 
+    ['redux-thunk', 'redux-saga', 'redux-observable'].includes(topic.id)
+  );
+  
+  const normalizedStateTopics = advancedReduxTopics.filter(topic => 
+    ['normalization'].includes(topic.id)
+  );
+  
+  const performanceTopics = advancedReduxTopics.filter(topic => 
+    ['reselect', 're-reselect'].includes(topic.id)
+  );
+  
+  const advancedImplementationTopics = advancedReduxTopics.filter(topic => 
+    ['dynamic-reducers', 'redux-toolkit', 'immutable-patterns', 'testing-redux', 'typescript', 'ssr'].includes(topic.id)
+  );
+
   return (
     <>
-      <h2>Welcome to Redux Demo</h2>
-      <p>This is a simple application demonstrating Redux core concepts.</p>
+      <h2>Learning Redux </h2>
+      <p>This is a simple application demonstrating Redux concepts.</p>
       
       <ConceptTable concepts={coreReduxConcepts} title="Redux Core Concepts" />
-      <ConceptTable concepts={advancedReduxTopics} title="Advanced Redux Topics" />
       
-      {/* Add sub-tables for the new topics */}
+      <h2 className="section-divider">Advanced Redux Topics</h2>
+      
+      <ConceptTable concepts={middlewareTopics} title="Middleware Solutions" />
+      
+      {/* Existing sections for Normalization and Reselect */}
       <div className="section">
         <h3>Normalization of State</h3>
         <p>Different approaches to structure your Redux store for efficiency with related data</p>
@@ -192,6 +259,12 @@ const HomePage = () => {
           </tbody>
         </table>
       </div>
+      
+      {/* New section to highlight advanced implementation topics */}
+      <ConceptTable 
+        concepts={advancedImplementationTopics} 
+        title="Advanced Implementation Patterns"
+      />
     </>
   );
 };
@@ -202,6 +275,7 @@ const App = () => {
       <Router>
         <Layout>
           <Routes>
+            {/* Existing routes */}
             <Route path="/" element={<HomePage />} />
             <Route path="/concepts/actions" element={<ActionsComponent />} />
             <Route path="/concepts/reducers" element={<ReducersComponent />} />
@@ -224,6 +298,15 @@ const App = () => {
             <Route path="/concepts/reselect/basic-reselect" element={<BasicReselectComponent />} />
             <Route path="/concepts/reselect/parameterized-selectors" element={<ParameterizedSelectorsComponent />} />
             <Route path="/concepts/reselect/filtering-todos" element={<FilteringTodosComponent />} />
+
+            {/* New Advanced Topics Routes */}
+            <Route path="/concepts/re-reselect" element={<ReReselectComponent />} />
+            <Route path="/concepts/dynamic-reducers" element={<DynamicReducersComponent />} />
+            <Route path="/concepts/redux-toolkit" element={<ReduxToolkitComponent />} />
+            <Route path="/concepts/immutable-patterns" element={<ImmutablePatternsComponent />} />
+            <Route path="/concepts/testing-redux" element={<TestingReduxComponent />} />
+            <Route path="/concepts/typescript" element={<TypeScriptIntegrationComponent />} />
+            <Route path="/concepts/ssr" element={<SSRReduxComponent />} />
           </Routes>
         </Layout>
       </Router>

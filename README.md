@@ -35,6 +35,10 @@ Builds the app for production to the `build` folder.
 
 Launches the test runner in interactive watch mode.
 
+#### `pnpm server`
+
+Runs the server-side rendering example (for SSR demo).
+
 ## Project Structure
 
 ```
