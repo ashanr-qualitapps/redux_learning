@@ -1,6 +1,4 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { normalize, schema } from 'normalizr';
 
 // Main component for Normalization
 export const NormalizationComponent = () => {

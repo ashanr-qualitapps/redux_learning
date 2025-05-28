@@ -21,118 +21,144 @@ import {
   SSRReduxComponent
 } from './components/AdvancedTopics';
 
+// Add category field to core concepts for filtering and display
 const coreReduxConcepts = [
   {
     id: 'actions',
     concept: 'Actions and Action Creators',
     description: 'Functions that create actions to update state',
+    category: 'core'
   },
   {
     id: 'reducers',
     concept: 'Reducers',
     description: 'Functions that determine how state changes',
+    category: 'core'
   },
   {
     id: 'store',
     concept: 'Store',
     description: 'The object that brings actions and reducers together',
+    category: 'core'
   },
   {
     id: 'hooks',
     concept: 'React-Redux integration with hooks',
     description: 'Using React hooks to interact with Redux store',
+    category: 'core'
   },
   {
     id: 'middleware',
     concept: 'Middleware',
     description: 'Extending Redux with custom functionality',
+    category: 'core'
   },
   {
     id: 'thunks',
     concept: 'Async operations using Redux Thunk middleware',
     description: 'Handling asynchronous logic in Redux',
+    category: 'core'
   },
 ];
 
-// Add advanced topics to the array
+// Add category field to advanced topics
 const advancedReduxTopics = [
   {
     id: 'redux-thunk',
     concept: 'Redux-Thunk in depth',
     description: 'Function-based middleware for async actions',
+    category: 'middleware'
   },
   {
     id: 'redux-saga',
     concept: 'Redux Saga',
     description: 'Generator-based middleware for complex async flows',
+    category: 'middleware'
   },
   {
     id: 'redux-observable',
     concept: 'Redux Observable',
     description: 'RxJS-powered middleware for reactive programming',
+    category: 'middleware'
   },
   {
     id: 'normalization',
     concept: 'Normalization of State',
     description: 'Techniques for structuring state for efficiency',
+    category: 'advanced'
   },
   {
     id: 'reselect',
     concept: 'Reselect and Memoization',
     description: 'Performance optimization with memoized selectors',
+    category: 'advanced'
   },
   {
     id: 're-reselect',
     concept: 'Advanced: Caching with re-reselect',
     description: 'Enhanced selector caching for complex applications',
+    category: 'advanced'
   },
   {
     id: 'dynamic-reducers',
     concept: 'Code Splitting and Dynamic Reducers',
     description: 'Loading Redux modules on demand',
+    category: 'implementation'
   },
   {
     id: 'redux-toolkit',
     concept: 'Redux Toolkit',
     description: 'Official, opinionated toolset for Redux development',
+    category: 'implementation'
   },
   {
     id: 'immutable-patterns',
     concept: 'Immutable Update Patterns',
     description: 'Techniques for maintaining state immutability',
+    category: 'implementation'
   },
   {
     id: 'testing-redux',
     concept: 'Testing Redux Logic',
     description: 'Best practices for testing Redux code',
+    category: 'implementation'
   },
   {
     id: 'typescript',
     concept: 'Integration with TypeScript',
     description: 'Adding static typing to Redux applications',
+    category: 'implementation'
   },
   {
     id: 'ssr',
     concept: 'Server-Side Rendering with Redux',
     description: 'Rendering Redux apps on the server',
+    category: 'implementation'
   }
 ];
 
+// Add category and parent fields to sub-topics for proper routing and display
 const normalizationTopics = [
   {
     id: 'manual-normalization',
     concept: 'Manual Normalized State Example',
     description: 'How to structure normalized state manually',
+    category: 'normalization',
+    parent: 'normalization'
   },
   {
     id: 'normalizr',
     concept: 'Using Normalizr Library',
     description: 'Simplifying normalization with Normalizr',
+    category: 'normalization',
+    parent: 'normalization'
   },
   {
     id: 'entity-adapter',
     concept: 'Redux Toolkit: createEntityAdapter',
     description: 'Modern approach to managing normalized entities',
+    category: 'normalization',
+    parent: 'normalization'
   }
 ];
 
@@ -141,131 +167,109 @@ const reselectTopics = [
     id: 'basic-reselect',
     concept: 'Basic Reselect Example',
     description: 'Introduction to memoized selectors',
+    category: 'reselect',
+    parent: 'reselect'
   },
   {
     id: 'parameterized-selectors',
     concept: 'Selectors with Parameters',
     description: 'Creating selectors that accept arguments',
+    category: 'reselect',
+    parent: 'reselect'
   },
   {
     id: 'filtering-todos',
     concept: 'Practical Example: Filtering Todos',
     description: 'Using Reselect for filtered lists',
+    category: 'reselect',
+    parent: 'reselect'
   }
 ];
 
-const ConceptTable = ({ concepts, title }) => (
-  <div className="section">
-    <h3>{title}</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Concept</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        {concepts.map((item) => (
-          <tr key={item.id}>
-            <td>
-              <Link to={`/concepts/${item.id}`} className="concept-link">
-                {item.concept}
-              </Link>
-            </td>
-            <td>{item.description}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-);
+// Replace the separate ConceptTable component with a more generic version that handles categories
+const ConceptTable = ({ allConcepts }) => {
+  // Group the concepts by category
+  const groupedConcepts = allConcepts.reduce((acc, concept) => {
+    if (!acc[concept.category]) {
+      acc[concept.category] = [];
+    }
+    acc[concept.category].push(concept);
+    return acc;
+  }, {});
 
-const HomePage = () => {
-  // Group advanced topics for better organization
-  const middlewareTopics = advancedReduxTopics.filter(topic => 
-    ['redux-thunk', 'redux-saga', 'redux-observable'].includes(topic.id)
-  );
-  
-  const normalizedStateTopics = advancedReduxTopics.filter(topic => 
-    ['normalization'].includes(topic.id)
-  );
-  
-  const performanceTopics = advancedReduxTopics.filter(topic => 
-    ['reselect', 're-reselect'].includes(topic.id)
-  );
-  
-  const advancedImplementationTopics = advancedReduxTopics.filter(topic => 
-    ['dynamic-reducers', 'redux-toolkit', 'immutable-patterns', 'testing-redux', 'typescript', 'ssr'].includes(topic.id)
-  );
+  // Define the display order and labels for categories
+  const categoryOrder = ['core', 'middleware', 'advanced', 'normalization', 'reselect', 'implementation'];
+  const categoryLabels = {
+    core: 'Core Redux Concepts',
+    middleware: 'Middleware Solutions',
+    advanced: 'Advanced Concepts',
+    normalization: 'Normalization Techniques',
+    reselect: 'Reselect Techniques',
+    implementation: 'Advanced Implementation Patterns'
+  };
 
   return (
-    <>
-      <h2>Learning Redux </h2>
-      <p>This is a simple application demonstrating Redux concepts.</p>
-      
-      <ConceptTable concepts={coreReduxConcepts} title="Redux Core Concepts" />
-      
-      <h2 className="section-divider">Advanced Redux Topics</h2>
-      
-      <ConceptTable concepts={middlewareTopics} title="Middleware Solutions" />
-      
-      {/* Existing sections for Normalization and Reselect */}
-      <div className="section">
-        <h3>Normalization of State</h3>
-        <p>Different approaches to structure your Redux store for efficiency with related data</p>
-        <table>
-          <thead>
-            <tr>
-              <th>Topic</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            {normalizationTopics.map((item) => (
-              <tr key={item.id}>
-                <td>
-                  <Link to={`/concepts/normalization/${item.id}`} className="concept-link">
-                    {item.concept}
-                  </Link>
-                </td>
-                <td>{item.description}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+    <div className="unified-concepts-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Concept</th>
+            <th>Description</th>
+            <th>Category</th>
+          </tr>
+        </thead>
+        <tbody>
+          {categoryOrder.map(category => {
+            const conceptsInCategory = groupedConcepts[category] || [];
+            if (conceptsInCategory.length === 0) return null;
+            
+            return (
+              <React.Fragment key={category}>
+                <tr className="category-header">
+                  <td colSpan="3">{categoryLabels[category]}</td>
+                </tr>
+                {conceptsInCategory.map(item => (
+                  <tr key={item.id} className="concept-row">
+                    <td>
+                      <Link 
+                        to={item.parent 
+                          ? `/concepts/${item.parent}/${item.id}` 
+                          : `/concepts/${item.id}`} 
+                        className="concept-link"
+                      >
+                        {item.concept}
+                      </Link>
+                    </td>
+                    <td>{item.description}</td>
+                    <td>{categoryLabels[item.category]}</td>
+                  </tr>
+                ))}
+              </React.Fragment>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+};
 
-      <div className="section">
-        <h3>Reselect and Memoization</h3>
-        <p>Performance optimization techniques for Redux applications</p>
-        <table>
-          <thead>
-            <tr>
-              <th>Topic</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            {reselectTopics.map((item) => (
-              <tr key={item.id}>
-                <td>
-                  <Link to={`/concepts/reselect/${item.id}`} className="concept-link">
-                    {item.concept}
-                  </Link>
-                </td>
-                <td>{item.description}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+const HomePage = () => {
+  // Combine all concepts into a single array for the unified table
+  const allConcepts = [
+    ...coreReduxConcepts,
+    ...advancedReduxTopics,
+    ...normalizationTopics,
+    ...reselectTopics
+  ];
+
+  return (
+    <div className="homepage-container">
+      <h2 className="homepage-header">Learning Redux</h2>
+      <p className="homepage-intro">This is a simple application demonstrating Redux concepts.</p>
       
-      {/* New section to highlight advanced implementation topics */}
-      <ConceptTable 
-        concepts={advancedImplementationTopics} 
-        title="Advanced Implementation Patterns"
-      />
-    </>
+      {/* Unified table with all concepts */}
+      <ConceptTable allConcepts={allConcepts} />
+    </div>
   );
 };
 

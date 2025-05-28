@@ -10,7 +10,7 @@ function App() {
     <Provider store={store}>
       <div className="App">
         <header className="App-header">
-          <h1>Redux Demo App</h1>
+          <h1>Redux</h1>
         </header>
         <main>
           <Counter />

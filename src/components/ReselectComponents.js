@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
 
 // Main Reselect Component
@@ -198,8 +197,8 @@ export const FilteringTodosComponent = () => {
   ];
 
   // Define our selectors
-  const getTodos = () => initialTodos;
-  const getFilter = () => filter;
+  const getTodos = () => initialTodos; // This selector now directly returns the local initialTodos
+  const getFilter = () => filter; // This selector now directly returns the local filter state
   
   // Create a memoized selector for filtered todos
   const getFilteredTodos = createSelector(

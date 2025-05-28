@@ -1,9 +1,5 @@
-import React, { useState, useMemo, lazy, Suspense } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createSelector } from 'reselect';
-import { createCachedSelector } from 're-reselect';
-import { configureStore, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 // Back button component
 const BackButton = () => {
