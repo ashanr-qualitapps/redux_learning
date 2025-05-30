@@ -687,14 +687,16 @@ describe('PostsList Component', () => {
 });`}</pre>
       </div>
 
-      <h3>Testing Best Practices</h3>
-      <ul>
-        <li>Test each Redux part in isolation: reducers, actions, selectors</li>
-        <li>Use snapshot testing for reducers with complex state</li>
-        <li>Mock API calls in thunk tests</li>
-        <li>For component integration tests, use a real or mock store</li>
-        <li>Test edge cases and error conditions</li>
-      </ul>
+      <div className="example-box">
+        <h3>Testing Best Practices</h3>
+        <ul>
+          <li>Test each Redux part in isolation: reducers, actions, selectors</li>
+          <li>Use snapshot testing for reducers with complex state</li>
+          <li>Mock API calls in thunk tests</li>
+          <li>For component integration tests, use a real or mock store</li>
+          <li>Test edge cases and error conditions</li>
+        </ul>
+      </div>
     </div>
   );
 };
@@ -1172,6 +1174,553 @@ app.get('*', async (req, res) => {
         <li>Server load and performance</li>
         <li>Handling authentication and cookies</li>
         <li>Code splitting becomes more complicated</li>
+      </ul>
+    </div>
+  );
+};
+
+// 8. Entity Relationships
+export const EntityRelationshipsComponent = () => {
+  return (
+    <div className="section">
+      <BackButton />
+      <h2><span className="topic-date">2025-05-30</span> Managing Entity Relationships in Redux</h2>
+      <p>
+        One of the challenges in Redux applications is properly managing relationships between
+        different entities in a normalized state structure. This is especially important for 
+        complex data with many interconnections.
+      </p>
+
+      <div className="example-box">
+        <h3>Normalized State with Relationships</h3>
+        <pre>{`// Example of normalized state with relationships
+const state = {
+  entities: {
+    users: {
+      byId: {
+        '1': { id: '1', name: 'Alice', favoritePostIds: ['101', '104'] },
+        '2': { id: '2', name: 'Bob', favoritePostIds: ['102'] },
+        '3': { id: '3', name: 'Charlie', favoritePostIds: [] }
+      },
+      allIds: ['1', '2', '3']
+    },
+    posts: {
+      byId: {
+        '101': { id: '101', title: 'Redux Basics', authorId: '1', tagIds: ['t1', 't2'] },
+        '102': { id: '102', title: 'Normalization', authorId: '2', tagIds: ['t2', 't3'] },
+        '103': { id: '103', title: 'Async Redux', authorId: '1', tagIds: ['t1', 't4'] },
+        '104': { id: '104', title: 'Redux Toolkit', authorId: '3', tagIds: ['t1'] }
+      },
+      allIds: ['101', '102', '103', '104']
+    },
+    tags: {
+      byId: {
+        't1': { id: 't1', name: 'redux' },
+        't2': { id: 't2', name: 'normalization' },
+        't3': { id: 't3', name: 'data' },
+        't4': { id: 't4', name: 'async' }
+      },
+      allIds: ['t1', 't2', 't3', 't4']
+    },
+    comments: {
+      byId: {
+        'c1': { id: 'c1', text: 'Great article!', postId: '101', authorId: '2' },
+        'c2': { id: 'c2', text: 'Thanks for sharing', postId: '101', authorId: '3' },
+        'c3': { id: 'c3', text: 'Very helpful', postId: '102', authorId: '1' }
+      },
+      allIds: ['c1', 'c2', 'c3']
+    }
+  }
+}`}</pre>
+      </div>
+
+      <h3>Types of Relationships</h3>
+      <ul>
+        <li><strong>One-to-Many</strong>: One entity relates to many entities (e.g., user → posts)</li>
+        <li><strong>Many-to-Many</strong>: Many entities relate to many entities (e.g., posts ↔ tags)</li>
+        <li><strong>One-to-One</strong>: One entity relates to exactly one other entity (e.g., user → profile)</li>
+      </ul>
+
+      <div className="example-box">
+        <h3>Selectors for Related Data</h3>
+        <pre>{`// Selectors to retrieve related entities
+import { createSelector } from 'reselect';
+
+// Simple selectors for each entity type
+const selectUserEntities = state => state.entities.users.byId;
+const selectPostEntities = state => state.entities.posts.byId;
+const selectTagEntities = state => state.entities.tags.byId;
+const selectCommentEntities = state => state.entities.comments.byId;
+
+// Get a post with its author and tags
+export const selectPostWithRelations = createSelector(
+  [
+    selectPostEntities,
+    selectUserEntities,
+    selectTagEntities,
+    (_, postId) => postId
+  ],
+  (posts, users, tags, postId) => {
+    const post = posts[postId];
+    if (!post) return null;
+    
+    return {
+      ...post,
+      author: users[post.authorId],
+      tags: post.tagIds.map(tagId => tags[tagId])
+    };
+  }
+);
+
+// Get all posts for a user
+export const selectPostsByUser = createSelector(
+  [
+    selectPostEntities,
+    state => state.entities.posts.allIds,
+    (_, userId) => userId
+  ],
+  (posts, allPostIds, userId) => {
+    return allPostIds
+      .map(id => posts[id])
+      .filter(post => post.authorId === userId);
+  }
+);
+
+// Get all comments for a post with their authors
+export const selectCommentsForPost = createSelector(
+  [
+    selectCommentEntities,
+    selectUserEntities,
+    state => state.entities.comments.allIds,
+    (_, postId) => postId
+  ],
+  (comments, users, allCommentIds, postId) => {
+    return allCommentIds
+      .map(id => comments[id])
+      .filter(comment => comment.postId === postId)
+      .map(comment => ({
+        ...comment,
+        author: users[comment.authorId]
+      }));
+  }
+);`}</pre>
+      </div>
+
+      <div className="example-box">
+        <h3>Updating Related Entities</h3>
+        <pre>{`// Updating relationships in reducers
+// Adding a tag to a post
+case ADD_TAG_TO_POST: {
+  const { postId, tagId } = action.payload;
+  return {
+    ...state,
+    posts: {
+      ...state.posts,
+      byId: {
+        ...state.posts.byId,
+        [postId]: {
+          ...state.posts.byId[postId],
+          tagIds: [...state.posts.byId[postId].tagIds, tagId]
+        }
+      }
+    }
+  };
+}
+
+// Adding a favorite post for a user
+case ADD_FAVORITE_POST: {
+  const { userId, postId } = action.payload;
+  return {
+    ...state,
+    users: {
+      ...state.users,
+      byId: {
+        ...state.users.byId,
+        [userId]: {
+          ...state.users.byId[userId],
+          favoritePostIds: [
+            ...state.users.byId[userId].favoritePostIds,
+            postId
+          ]
+        }
+      }
+    }
+  };
+}
+
+// With Immer (Redux Toolkit approach)
+case ADD_FAVORITE_POST:
+  return produce(state, draft => {
+    const { userId, postId } = action.payload;
+    draft.entities.users.byId[userId].favoritePostIds.push(postId);
+  });`}</pre>
+      </div>
+
+      <h3>Best Practices for Entity Relationships</h3>
+      <ul>
+        <li>Use IDs to reference related entities instead of nesting</li>
+        <li>Keep entity types in separate "tables" in your state</li>
+        <li>Use selectors to reconstruct relationships when needed</li>
+        <li>Consider denormalization at the selector level for UI components</li>
+        <li>Use a consistent naming convention for ID arrays (e.g., authorId, tagIds)</li>
+        <li>Handle relationship updates carefully to maintain integrity</li>
+        <li>Consider using Redux Toolkit's entity adapters for managing collections</li>
+      </ul>
+
+      <div className="example-box">
+        <h3>Data Integrity</h3>
+        <pre>{`// Handling cascading deletions when removing an entity
+// Example: Removing a post and its associated comments
+function removePostWithComments(postId) {
+  return (dispatch, getState) => {
+    // First, find all comments for this post
+    const state = getState();
+    const commentsToRemove = Object.values(state.entities.comments.byId)
+      .filter(comment => comment.postId === postId)
+      .map(comment => comment.id);
+    
+    // Remove all associated comments first
+    dispatch(removeComments(commentsToRemove));
+    
+    // Then remove the post itself
+    dispatch(removePost(postId));
+  };
+}`}</pre>
+      </div>
+    </div>
+  );
+};
+
+// 9. Redux with WebSockets
+export const WebSocketsComponent = () => {
+  return (
+    <div className="section">
+      <BackButton />
+      <h2><span className="topic-date">2025-05-30</span> Redux with WebSockets</h2>
+      <p>
+        WebSockets provide a persistent connection between client and server, enabling
+        real-time data exchange. Integrating WebSockets with Redux allows your application
+        to handle real-time updates while maintaining a predictable state flow.
+      </p>
+
+      <div className="example-box">
+        <h3>WebSocket Middleware</h3>
+        <pre>{`// websocketMiddleware.js
+// Simple WebSocket middleware for Redux
+
+const websocketMiddleware = () => {
+  let socket = null;
+
+  return store => next => action => {
+    switch (action.type) {
+      case 'WS_CONNECT':
+        if (socket !== null) {
+          socket.close();
+        }
+
+        // Connect to the WebSocket server
+        socket = new WebSocket(action.payload.url);
+
+        // Handle WebSocket events
+        socket.onopen = () => store.dispatch({ 
+          type: 'WS_CONNECTED' 
+        });
+
+        socket.onclose = (event) => store.dispatch({ 
+          type: 'WS_DISCONNECTED', 
+          payload: event 
+        });
+
+        socket.onmessage = (event) => {
+          // Parse the message and dispatch corresponding actions
+          const message = JSON.parse(event.data);
+          
+          switch (message.type) {
+            case 'NEW_MESSAGE':
+              store.dispatch({
+                type: 'RECEIVE_MESSAGE',
+                payload: message.data
+              });
+              break;
+            
+            case 'USER_STATUS_CHANGE':
+              store.dispatch({
+                type: 'UPDATE_USER_STATUS',
+                payload: message.data
+              });
+              break;
+              
+            default:
+              // You could also dispatch a generic action
+              store.dispatch({
+                type: 'WS_MESSAGE',
+                payload: message
+              });
+          }
+        };
+
+        socket.onerror = (error) => store.dispatch({ 
+          type: 'WS_ERROR', 
+          payload: error 
+        });
+
+        break;
+
+      case 'WS_DISCONNECT':
+        if (socket !== null) {
+          socket.close();
+        }
+        socket = null;
+        break;
+
+      case 'WS_SEND':
+        // Send a message through the WebSocket
+        if (socket !== null && socket.readyState === WebSocket.OPEN) {
+          socket.send(JSON.stringify(action.payload));
+        } else {
+          console.error('WebSocket is not connected');
+          // Optionally queue message or reconnect
+        }
+        break;
+
+      default:
+        // Pass all other actions to the next middleware
+        return next(action);
+    }
+
+    return next(action);
+  };
+};
+
+export default websocketMiddleware;`}</pre>
+      </div>
+
+      <div className="example-box">
+        <h3>Adding the WebSocket Middleware to the Store</h3>
+        <pre>{`// store.js
+import { createStore, applyMiddleware, combineReducers } from 'redux';
+import thunk from 'redux-thunk';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import websocketMiddleware from './middlewares/websocketMiddleware';
+import rootReducer from './reducers';
+
+const store = createStore(
+  rootReducer,
+  composeWithDevTools(
+    applyMiddleware(
+      thunk,
+      websocketMiddleware()
+    )
+  )
+);
+
+// Connect to WebSocket when the store is created
+store.dispatch({
+  type: 'WS_CONNECT',
+  payload: {
+    url: 'wss://echo.websocket.org'
+  }
+});
+
+export default store;`}</pre>
+      </div>
+
+      <div className="example-box">
+        <h3>WebSocket Reducer</h3>
+        <pre>{`// websocketReducer.js
+const initialState = {
+  connected: false,
+  error: null
+};
+
+const websocketReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case 'WS_CONNECTED':
+      return {
+        ...state,
+        connected: true,
+        error: null
+      };
+      
+    case 'WS_DISCONNECTED':
+      return {
+        ...state,
+        connected: false
+      };
+      
+    case 'WS_ERROR':
+      return {
+        ...state,
+        error: action.payload
+      };
+      
+    default:
+      return state;
+  }
+};
+
+export default websocketReducer;`}</pre>
+      </div>
+
+      <div className="example-box">
+        <h3>Usage in Components</h3>
+        <pre>{`// ChatComponent.js
+import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+
+const ChatComponent = () => {
+  const [message, setMessage] = useState('');
+  const dispatch = useDispatch();
+  const connected = useSelector(state => state.websocket.connected);
+  const messages = useSelector(state => state.chat.messages);
+  
+  const handleSend = () => {
+    if (message.trim()) {
+      // Send chat message through WebSocket
+      dispatch({
+        type: 'WS_SEND',
+        payload: {
+          type: 'CHAT_MESSAGE',
+          data: {
+            content: message,
+            timestamp: Date.now()
+          }
+        }
+      });
+      
+      setMessage('');
+    }
+  };
+  
+  return (
+    <div className="chat-container">
+      <div className="status">
+        Status: {connected ? 'Connected' : 'Disconnected'}
+      </div>
+      
+      <div className="messages">
+        {messages.map((msg, index) => (
+          <div key={index} className="message">
+            <span className="timestamp">
+              {new Date(msg.timestamp).toLocaleTimeString()}
+            </span>
+            <span className="content">{msg.content}</span>
+          </div>
+        ))}
+      </div>
+      
+      <div className="input-area">
+        <input
+          type="text"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          disabled={!connected}
+          placeholder="Type a message..."
+        />
+        <button 
+          onClick={handleSend}
+          disabled={!connected}
+        >
+          Send
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default ChatComponent;`}</pre>
+      </div>
+
+      <h3>Advanced WebSocket Handling</h3>
+      <ul>
+        <li><strong>Reconnection Strategy</strong>: Implement exponential backoff for reconnection attempts</li>
+        <li><strong>Message Queue</strong>: Queue messages when disconnected and send once reconnected</li>
+        <li><strong>Heartbeat Mechanism</strong>: Keep the connection alive with periodic pings</li>
+        <li><strong>Authentication</strong>: Handle token-based auth for secure WebSocket connections</li>
+        <li><strong>Selective Subscriptions</strong>: Subscribe to specific channels or topics</li>
+      </ul>
+
+      <div className="example-box">
+        <h3>Reconnection Strategy</h3>
+        <pre>{`// Enhanced WebSocket middleware with reconnection
+const websocketMiddleware = () => {
+  let socket = null;
+  let reconnectTimer = null;
+  let reconnectAttempts = 0;
+  const MAX_RECONNECT_ATTEMPTS = 5;
+  
+  const getReconnectDelay = () => {
+    // Exponential backoff: 1s, 2s, 4s, 8s, 16s
+    return Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
+  };
+
+  return store => next => action => {
+    switch (action.type) {
+      case 'WS_CONNECT':
+        // Clear any existing connection and timers
+        if (socket !== null) {
+          socket.close();
+        }
+        
+        if (reconnectTimer) {
+          clearTimeout(reconnectTimer);
+          reconnectTimer = null;
+        }
+        
+        // Connect with the url from the action
+        const connect = () => {
+          socket = new WebSocket(action.payload.url);
+          
+          socket.onopen = () => {
+            reconnectAttempts = 0;
+            store.dispatch({ type: 'WS_CONNECTED' });
+          };
+          
+          socket.onclose = (event) => {
+            store.dispatch({ type: 'WS_DISCONNECTED', payload: event });
+            
+            // Attempt to reconnect if not explicitly disconnected
+            if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+              reconnectAttempts++;
+              store.dispatch({ 
+                type: 'WS_RECONNECTING', 
+                payload: { attempt: reconnectAttempts } 
+              });
+              
+              reconnectTimer = setTimeout(() => {
+                connect();
+              }, getReconnectDelay());
+            } else {
+              store.dispatch({ 
+                type: 'WS_RECONNECT_FAILED' 
+              });
+            }
+          };
+          
+          // Same message and error handlers as before
+          // ...
+        };
+        
+        connect();
+        break;
+        
+      // Other cases remain the same
+      // ...
+    }
+    
+    return next(action);
+  };
+};`}</pre>
+      </div>
+
+      <h3>Common Use Cases for Redux with WebSockets</h3>
+      <ul>
+        <li>Real-time chat applications</li>
+        <li>Collaborative editing tools</li>
+        <li>Live notifications and updates</li>
+        <li>Financial data and trading platforms</li>
+        <li>Multiplayer games</li>
+        <li>IoT device monitoring dashboards</li>
       </ul>
     </div>
   );

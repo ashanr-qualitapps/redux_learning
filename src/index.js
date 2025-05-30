@@ -18,7 +18,9 @@ import {
   ImmutablePatternsComponent,
   TestingReduxComponent,
   TypeScriptIntegrationComponent,
-  SSRReduxComponent
+  SSRReduxComponent,
+  EntityRelationshipsComponent,
+  WebSocketsComponent
 } from './components/AdvancedTopics';
 
 // Add category field to core concepts for filtering and display
@@ -98,6 +100,20 @@ const advancedReduxTopics = [
     concept: 'Advanced: Caching with re-reselect',
     description: 'Enhanced selector caching for complex applications',
     category: 'advanced'
+  },
+  {
+    id: 'entity-relationships',
+    concept: 'Entity Relationships',
+    description: 'Managing complex entity relationships in a normalized state',
+    category: 'advanced',
+    date: '2025-05-29'
+  },
+  {
+    id: 'websockets',
+    concept: 'Redux with WebSockets',
+    description: 'Using Redux with real-time data via WebSockets',
+    category: 'middleware',
+    date: '2025-05-29'
   },
   {
     id: 'dynamic-reducers',
@@ -303,7 +319,7 @@ const App = () => {
             <Route path="/concepts/reselect/parameterized-selectors" element={<ParameterizedSelectorsComponent />} />
             <Route path="/concepts/reselect/filtering-todos" element={<FilteringTodosComponent />} />
 
-            {/* New Advanced Topics Routes */}
+            {/* Advanced Topics Routes */}
             <Route path="/concepts/re-reselect" element={<ReReselectComponent />} />
             <Route path="/concepts/dynamic-reducers" element={<DynamicReducersComponent />} />
             <Route path="/concepts/redux-toolkit" element={<ReduxToolkitComponent />} />
@@ -311,6 +327,10 @@ const App = () => {
             <Route path="/concepts/testing-redux" element={<TestingReduxComponent />} />
             <Route path="/concepts/typescript" element={<TypeScriptIntegrationComponent />} />
             <Route path="/concepts/ssr" element={<SSRReduxComponent />} />
+            
+            {/* New Topic Routes */}
+            <Route path="/concepts/entity-relationships" element={<EntityRelationshipsComponent />} />
+            <Route path="/concepts/websockets" element={<WebSocketsComponent />} />
           </Routes>
         </Layout>
       </Router>
