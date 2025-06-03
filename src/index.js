@@ -1,12 +1,14 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import store from './redux/store';
+import store, { persistor } from './redux/store';
 import Layout from './components/Layout';
 import { ActionsComponent, ReducersComponent, StoreComponent, HooksComponent, ThunksComponent, MiddlewareComponent, ReduxThunkComponent, ReduxSagaComponent, ReduxObservableComponent } from './components/TopicComponents';
 import { NormalizationComponent, ManualNormalizationComponent, NormalizrComponent, EntityAdapterComponent } from './components/NormalizationComponents';
 import { ReselectComponent, BasicReselectComponent, ParameterizedSelectorsComponent, FilteringTodosComponent } from './components/ReselectComponents';
+import { ReduxPersistComponent } from './components/PersistComponents';
 import './index.css';
 import './styles.css';
 
@@ -61,6 +63,13 @@ const coreReduxConcepts = [
     description: 'Handling asynchronous logic in Redux',
     category: 'core'
   },
+  {
+    id: 'redux-persist',
+    concept: 'Redux Persist',
+    description: 'Persistently store Redux state across application sessions',
+    category: 'core',
+    date: '2025-06-02'
+  }
 ];
 
 // Add category field to advanced topics
@@ -247,6 +256,7 @@ const ConceptTable = ({ allConcepts }) => {
                 {conceptsInCategory.map(item => (
                   <tr key={item.id} className="concept-row">
                     <td>
+                      {item.date && <span className="topic-date">{item.date}</span>}
                       <Link 
                         to={item.parent 
                           ? `/concepts/${item.parent}/${item.id}` 
@@ -292,48 +302,53 @@ const HomePage = () => {
 const App = () => {
   return (
     <Provider store={store}>
-      <Router>
-        <Layout>
-          <Routes>
-            {/* Existing routes */}
-            <Route path="/" element={<HomePage />} />
-            <Route path="/concepts/actions" element={<ActionsComponent />} />
-            <Route path="/concepts/reducers" element={<ReducersComponent />} />
-            <Route path="/concepts/store" element={<StoreComponent />} />
-            <Route path="/concepts/hooks" element={<HooksComponent />} />
-            <Route path="/concepts/middleware" element={<MiddlewareComponent />} />
-            <Route path="/concepts/thunks" element={<ThunksComponent />} />
-            <Route path="/concepts/redux-thunk" element={<ReduxThunkComponent />} />
-            <Route path="/concepts/redux-saga" element={<ReduxSagaComponent />} />
-            <Route path="/concepts/redux-observable" element={<ReduxObservableComponent />} />
-            
-            {/* Normalization Routes */}
-            <Route path="/concepts/normalization" element={<NormalizationComponent />} />
-            <Route path="/concepts/normalization/manual-normalization" element={<ManualNormalizationComponent />} />
-            <Route path="/concepts/normalization/normalizr" element={<NormalizrComponent />} />
-            <Route path="/concepts/normalization/entity-adapter" element={<EntityAdapterComponent />} />
-            
-            {/* Reselect Routes */}
-            <Route path="/concepts/reselect" element={<ReselectComponent />} />
-            <Route path="/concepts/reselect/basic-reselect" element={<BasicReselectComponent />} />
-            <Route path="/concepts/reselect/parameterized-selectors" element={<ParameterizedSelectorsComponent />} />
-            <Route path="/concepts/reselect/filtering-todos" element={<FilteringTodosComponent />} />
+      <PersistGate loading={null} persistor={persistor}>
+        <Router>
+          <Layout>
+            <Routes>
+              {/* Existing routes */}
+              <Route path="/" element={<HomePage />} />
+              <Route path="/concepts/actions" element={<ActionsComponent />} />
+              <Route path="/concepts/reducers" element={<ReducersComponent />} />
+              <Route path="/concepts/store" element={<StoreComponent />} />
+              <Route path="/concepts/hooks" element={<HooksComponent />} />
+              <Route path="/concepts/middleware" element={<MiddlewareComponent />} />
+              <Route path="/concepts/thunks" element={<ThunksComponent />} />
+              <Route path="/concepts/redux-thunk" element={<ReduxThunkComponent />} />
+              <Route path="/concepts/redux-saga" element={<ReduxSagaComponent />} />
+              <Route path="/concepts/redux-observable" element={<ReduxObservableComponent />} />
+              
+              {/* Normalization Routes */}
+              <Route path="/concepts/normalization" element={<NormalizationComponent />} />
+              <Route path="/concepts/normalization/manual-normalization" element={<ManualNormalizationComponent />} />
+              <Route path="/concepts/normalization/normalizr" element={<NormalizrComponent />} />
+              <Route path="/concepts/normalization/entity-adapter" element={<EntityAdapterComponent />} />
+              
+              {/* Reselect Routes */}
+              <Route path="/concepts/reselect" element={<ReselectComponent />} />
+              <Route path="/concepts/reselect/basic-reselect" element={<BasicReselectComponent />} />
+              <Route path="/concepts/reselect/parameterized-selectors" element={<ParameterizedSelectorsComponent />} />
+              <Route path="/concepts/reselect/filtering-todos" element={<FilteringTodosComponent />} />
 
-            {/* Advanced Topics Routes */}
-            <Route path="/concepts/re-reselect" element={<ReReselectComponent />} />
-            <Route path="/concepts/dynamic-reducers" element={<DynamicReducersComponent />} />
-            <Route path="/concepts/redux-toolkit" element={<ReduxToolkitComponent />} />
-            <Route path="/concepts/immutable-patterns" element={<ImmutablePatternsComponent />} />
-            <Route path="/concepts/testing-redux" element={<TestingReduxComponent />} />
-            <Route path="/concepts/typescript" element={<TypeScriptIntegrationComponent />} />
-            <Route path="/concepts/ssr" element={<SSRReduxComponent />} />
-            
-            {/* New Topic Routes */}
-            <Route path="/concepts/entity-relationships" element={<EntityRelationshipsComponent />} />
-            <Route path="/concepts/websockets" element={<WebSocketsComponent />} />
-          </Routes>
-        </Layout>
-      </Router>
+              {/* Advanced Topics Routes */}
+              <Route path="/concepts/re-reselect" element={<ReReselectComponent />} />
+              <Route path="/concepts/dynamic-reducers" element={<DynamicReducersComponent />} />
+              <Route path="/concepts/redux-toolkit" element={<ReduxToolkitComponent />} />
+              <Route path="/concepts/immutable-patterns" element={<ImmutablePatternsComponent />} />
+              <Route path="/concepts/testing-redux" element={<TestingReduxComponent />} />
+              <Route path="/concepts/typescript" element={<TypeScriptIntegrationComponent />} />
+              <Route path="/concepts/ssr" element={<SSRReduxComponent />} />
+              
+              {/* New Topic Routes */}
+              <Route path="/concepts/entity-relationships" element={<EntityRelationshipsComponent />} />
+              <Route path="/concepts/websockets" element={<WebSocketsComponent />} />
+              
+              {/* Add Redux Persist Route */}
+              <Route path="/concepts/redux-persist" element={<ReduxPersistComponent />} />
+            </Routes>
+          </Layout>
+        </Router>
+      </PersistGate>
     </Provider>
   );
 };

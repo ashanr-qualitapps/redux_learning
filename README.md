@@ -61,9 +61,11 @@ This project demonstrates:
 | <a href="https://redux.js.org/basics/store">Store</a>                                     | The object that brings actions and reducers together |
 | <a href="https://react-redux.js.org/api/hooks">React-Redux integration with hooks</a>        | Using React hooks to interact with Redux store       |
 | <a href="https://redux.js.org/usage/writing-logic-thunks">Async operations using Redux Thunk middleware</a> | Handling asynchronous logic in Redux                 |
+| <a href="https://github.com/rt2zz/redux-persist">Redux Persist</a> | Persistently storing Redux state across sessions    |
 
 ## Learn More
 
 - [React documentation](https://reactjs.org/)
 - [Redux documentation](https://redux.js.org/)
 - [React Redux documentation](https://react-redux.js.org/)
+- [Redux Persist documentation](https://github.com/rt2zz/redux-persist)

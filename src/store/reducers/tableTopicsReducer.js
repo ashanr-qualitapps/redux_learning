@@ -10,6 +10,11 @@ const initialState = {
       id: 'reselect',
       title: 'Reselect and Memoization',
       description: 'Performance optimization with memoized selectors'
+    },
+    {
+      id: 'redux-persist',
+      title: 'Redux Persist',
+      description: 'Persistently store Redux state across application sessions'
     }
   ],
   loading: false,
@@ -58,5 +63,14 @@ const tableTopicsReducer = (state = initialState, action) => {
       return state;
   }
 };
+
+// Selectors
+export const getAllTopics = state => state.tableTopics?.topics || initialState.topics;
+export const getTopicById = (state, id) => 
+  getAllTopics(state).find(topic => topic.id === id);
+export const getReduxPersistTopic = state => 
+  getTopicById(state, 'redux-persist');
+export const getLoadingStatus = state => state.tableTopics?.loading;
+export const getError = state => state.tableTopics?.error;
 
 export default tableTopicsReducer;
