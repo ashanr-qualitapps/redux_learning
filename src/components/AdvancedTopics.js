@@ -1,24 +1,19 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-
-// Back button component
-const BackButton = () => {
-  const navigate = useNavigate();
-  return (
-    <button 
-      onClick={() => navigate(-1)} 
-      style={{ marginBottom: '1rem' }}
-    >
-      ← Back
-    </button>
-  );
-};
+import React, { lazy, Suspense } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { createSelector } from 'reselect';
+import { configureStore } from '@reduxjs/toolkit';
+import { Provider } from 'react-redux';
+import { renderToString } from 'react-dom/server';
+import { StaticRouter } from 'react-router-dom';
+import thunk from 'redux-thunk';
+import produce from 'immer';
+import { HomeButton, BackButton } from './NavigationButtons';
 
 // 1. Advanced: Caching with re-reselect
 export const ReReselectComponent = () => {
   return (
     <div className="section">
-      <BackButton />
+      <HomeButton />
       <h2>Advanced: Caching with re-reselect</h2>
       <p>
         While reselect provides memoization, it only caches the most recent arguments and result.
@@ -76,6 +71,7 @@ const user2 = useSelector(state => getUserById(state, 'user2'));`}</pre>
         <li>Using cache eviction strategies for rarely accessed items</li>
         <li>Only using cached selectors when there's a clear performance benefit</li>
       </ul>
+      <BackButton />
     </div>
   );
 };
@@ -84,7 +80,7 @@ const user2 = useSelector(state => getUserById(state, 'user2'));`}</pre>
 export const DynamicReducersComponent = () => {
   return (
     <div className="section">
-      <BackButton />
+      <HomeButton />
       <h2>Code Splitting and Dynamic Reducers</h2>
       <p>
         Code splitting allows you to load parts of your application on demand, reducing initial load time.
@@ -189,6 +185,7 @@ export default withReducer('posts', postsReducer)(Posts);`}</pre>
         <li>Better performance for large applications</li>
         <li>Enables true code splitting for Redux logic</li>
       </ul>
+      <BackButton />
     </div>
   );
 };
@@ -197,7 +194,7 @@ export default withReducer('posts', postsReducer)(Posts);`}</pre>
 export const ReduxToolkitComponent = () => {
   return (
     <div className="section">
-      <BackButton />
+      <HomeButton />
       <h2>Redux Toolkit</h2>
       <p>
         Redux Toolkit is the official, opinionated, batteries-included toolset for efficient Redux development.
@@ -351,6 +348,7 @@ export const PostsList = () => {
         <li>Integrated Redux DevTools</li>
         <li>One package instead of multiple dependencies</li>
       </ul>
+      <BackButton />
     </div>
   );
 };
@@ -359,7 +357,7 @@ export const PostsList = () => {
 export const ImmutablePatternsComponent = () => {
   return (
     <div className="section">
-      <BackButton />
+      <HomeButton />
       <h2>Immutable Update Patterns</h2>
       <p>
         Immutability is crucial in Redux for performance and predictability. 
@@ -486,6 +484,7 @@ const complexReducerWithImmer = (state = initialState, action) => {
         <li>Structure your state to minimize nesting</li>
         <li>Consider normalized state shapes</li>
       </ul>
+      <BackButton />
     </div>
   );
 };
@@ -494,7 +493,7 @@ const complexReducerWithImmer = (state = initialState, action) => {
 export const TestingReduxComponent = () => {
   return (
     <div className="section">
-      <BackButton />
+      <HomeButton />
       <h2>Testing Redux Logic</h2>
       <p>
         Testing is essential for maintainable Redux applications. Here's how to test
@@ -697,6 +696,7 @@ describe('PostsList Component', () => {
           <li>Test edge cases and error conditions</li>
         </ul>
       </div>
+      <BackButton />
     </div>
   );
 };
@@ -705,7 +705,7 @@ describe('PostsList Component', () => {
 export const TypeScriptIntegrationComponent = () => {
   return (
     <div className="section">
-      <BackButton />
+      <HomeButton />
       <h2>Integration with TypeScript</h2>
       <p>
         TypeScript brings static typing to Redux, improving code reliability
@@ -962,6 +962,7 @@ export const PostsList: React.FC = () => {
         <li>Self-documenting code</li>
         <li>Type safety across your entire Redux flow</li>
       </ul>
+      <BackButton />
     </div>
   );
 };
@@ -970,7 +971,7 @@ export const PostsList: React.FC = () => {
 export const SSRReduxComponent = () => {
   return (
     <div className="section">
-      <BackButton />
+      <HomeButton />
       <h2>Server-Side Rendering (SSR) with Redux</h2>
       <p>
         Server-Side Rendering (SSR) allows you to render React components on the server 
@@ -1175,6 +1176,7 @@ app.get('*', async (req, res) => {
         <li>Handling authentication and cookies</li>
         <li>Code splitting becomes more complicated</li>
       </ul>
+      <BackButton />
     </div>
   );
 };
@@ -1183,7 +1185,7 @@ app.get('*', async (req, res) => {
 export const EntityRelationshipsComponent = () => {
   return (
     <div className="section">
-      <BackButton />
+      <HomeButton />
       <h2><span className="topic-date">2025-05-30</span> Managing Entity Relationships in Redux</h2>
       <p>
         One of the challenges in Redux applications is properly managing relationships between
@@ -1387,6 +1389,7 @@ function removePostWithComments(postId) {
   };
 }`}</pre>
       </div>
+      <BackButton />
     </div>
   );
 };
@@ -1395,7 +1398,7 @@ function removePostWithComments(postId) {
 export const WebSocketsComponent = () => {
   return (
     <div className="section">
-      <BackButton />
+      <HomeButton />
       <h2><span className="topic-date">2025-05-30</span> Redux with WebSockets</h2>
       <p>
         WebSockets provide a persistent connection between client and server, enabling
@@ -1500,17 +1503,14 @@ export default websocketMiddleware;`}</pre>
         <pre>{`// store.js
 import { createStore, applyMiddleware, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
-import { composeWithDevTools } from 'redux-devtools-extension';
 import websocketMiddleware from './middlewares/websocketMiddleware';
 import rootReducer from './reducers';
 
 const store = createStore(
   rootReducer,
-  composeWithDevTools(
-    applyMiddleware(
-      thunk,
-      websocketMiddleware()
-    )
+  applyMiddleware(
+    thunk,
+    websocketMiddleware()
   )
 );
 
@@ -1722,6 +1722,7 @@ const websocketMiddleware = () => {
         <li>Multiplayer games</li>
         <li>IoT device monitoring dashboards</li>
       </ul>
+      <BackButton />
     </div>
   );
 };

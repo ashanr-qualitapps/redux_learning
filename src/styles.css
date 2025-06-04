@@ -195,3 +195,602 @@ table th {
 .live-preview button {
   margin-top: 5px; /* Add some margin to buttons in preview */
 }
+
+/* New styles for improved learning experience */
+.diagram-container {
+  margin: 2rem 0;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  overflow: auto;
+}
+
+.state-flow-diagram {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  display: block;
+}
+
+/* Quiz and interactive exercise styles */
+.quiz-container {
+  background-color: #eef5ff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+}
+
+.quiz-question {
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.quiz-options {
+  margin: 1rem 0;
+}
+
+.quiz-option {
+  display: block;
+  padding: 0.75rem 1rem;
+  margin: 0.5rem 0;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.quiz-option:hover {
+  background-color: #e5e5e5;
+}
+
+.quiz-option.selected {
+  background-color: #d1e7ff;
+  border-color: #0066cc;
+}
+
+.quiz-feedback {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.quiz-feedback.correct {
+  background-color: #e5ffe5;
+  color: #008800;
+}
+
+.quiz-feedback.incorrect {
+  background-color: #ffe5e5;
+  color: #880000;
+}
+
+/* Compare and contrast panels */
+.comparison-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+@media (max-width: 768px) {
+  .comparison-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.comparison-panel {
+  background-color: #f5f5f5;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.comparison-title {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #0066cc;
+}
+
+/* Progress tracking */
+.learning-progress {
+  background-color: #f0f0f0;
+  height: 8px;
+  border-radius: 4px;
+  margin: 2rem 0 1rem;
+}
+
+.learning-progress-bar {
+  height: 100%;
+  background-color: #0066cc;
+  border-radius: 4px;
+}
+
+/* Table of contents / learning path */
+.learning-path {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.learning-path-title {
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.learning-path-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.learning-path-item .completion-marker {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin-right: 1rem;
+  background-color: #ddd;
+}
+
+.learning-path-item.completed .completion-marker {
+  background-color: #28a745;
+}
+
+.learning-path-item.active {
+  font-weight: 600;
+}
+
+.learning-path-item.active .completion-marker {
+  background-color: #0066cc;
+}
+
+/* Enhanced Tutorial Experience Styles */
+
+/* Table of Contents with jump links */
+.tutorial-toc {
+  background-color: #f8f9fa;
+  border-left: 4px solid #0066cc;
+  padding: 1rem;
+  margin: 1.5rem 0;
+  border-radius: 4px;
+}
+
+.tutorial-toc h4 {
+  margin-top: 0;
+}
+
+.tutorial-toc ul {
+  list-style-type: none;
+  padding-left: 0.5rem;
+}
+
+.tutorial-toc li {
+  margin-bottom: 0.5rem;
+}
+
+.tutorial-toc a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.tutorial-toc a:hover {
+  text-decoration: underline;
+}
+
+/* Concept visualization */
+.concept-diagram {
+  max-width: 100%;
+  margin: 2rem auto;
+  text-align: center;
+}
+
+.concept-diagram img {
+  max-width: 100%;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  border-radius: 8px;
+}
+
+/* Enhanced code comments */
+.code-annotation {
+  background-color: #f0f7ff;
+  border-left: 3px solid #0066cc;
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+/* Before/After comparison container */
+.code-comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.code-comparison > div {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.code-comparison h4 {
+  background-color: #f5f5f5;
+  margin: 0;
+  padding: 0.5rem;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Interactive quiz component */
+.interactive-quiz {
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  border: 1px solid #e0e0e0;
+}
+
+.quiz-option {
+  display: block;
+  padding: 0.75rem 1rem;
+  margin: 0.5rem 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quiz-option:hover {
+  border-color: #0066cc;
+}
+
+.quiz-option.selected-correct {
+  background-color: #e6f7e6;
+  border-color: #28a745;
+}
+
+.quiz-option.selected-incorrect {
+  background-color: #fae3e3;
+  border-color: #dc3545;
+}
+
+/* Expandable code examples */
+.expandable-code {
+  margin: 1.5rem 0;
+}
+
+.expandable-header {
+  background-color: #f5f5f5;
+  padding: 0.75rem 1rem;
+  border-radius: 4px 4px 0 0;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.expandable-header:hover {
+  background-color: #e9e9e9;
+}
+
+.expandable-content {
+  border: 1px solid #ddd;
+  border-top: none;
+  padding: 0;
+  border-radius: 0 0 4px 4px;
+  overflow: hidden;
+}
+
+/* "Try it yourself" interactive sections */
+.try-it-yourself {
+  background-color: #f0f7ff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  border: 1px solid #b8daff;
+}
+
+.try-it-yourself h3 {
+  margin-top: 0;
+  color: #0066cc;
+}
+
+/* Key points summary */
+.key-points {
+  background-color: #fefaf0;
+  border-left: 4px solid #ffc107;
+  padding: 1rem 1.5rem;
+  margin: 2rem 0;
+  border-radius: 0 4px 4px 0;
+}
+
+.key-points h3 {
+  margin-top: 0;
+  color: #856404;
+}
+
+.key-points ul {
+  margin-bottom: 0;
+}
+
+/* Dark mode toggle for night reading */
+.dark-mode-toggle {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background-color: #343a40;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  z-index: 1000;
+}
+
+.dark-mode-toggle:hover {
+  background-color: #23272b;
+}
+
+/* Bookmark feature */
+.bookmark-btn {
+  background: none;
+  border: none;
+  color: #6c757d;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0.25rem;
+  margin-left: 0.5rem;
+}
+
+.bookmark-btn.active {
+  color: #ffc107;
+}
+
+/* Tutorial progress indicator */
+.progress-container {
+  position: relative;
+  height: 4px;
+  background-color: #e9ecef;
+  margin-bottom: 2rem;
+  border-radius: 2px;
+}
+
+.progress-bar {
+  position: absolute;
+  height: 100%;
+  background-color: #0066cc;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* Reading time indicator */
+.reading-time {
+  display: inline-block;
+  font-size: 0.85rem;
+  color: #666;
+  background-color: #f8f9fa;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  margin-top: 0.5rem;
+}
+
+.reading-time i {
+  margin-right: 0.25rem;
+}
+
+/* Section navigation styles */
+.section-navigation {
+  display: flex;
+  justify-content: space-between;
+  margin: 2rem 0;
+  padding: 1rem 0;
+  border-top: 1px solid #e0e0e0;
+}
+
+.section-nav-button {
+  padding: 0.75rem 1.5rem;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.section-nav-button:hover {
+  background-color: #e0e0e0;
+}
+
+.section-nav-button.prev {
+  padding-left: 1rem;
+}
+
+.section-nav-button.next {
+  padding-right: 1rem;
+}
+
+/* Section anchors for navigation */
+.section-anchor {
+  display: block;
+  position: relative;
+  top: -80px;
+  visibility: hidden;
+}
+
+/* Active section indicator */
+.tutorial-toc li.active > a {
+  font-weight: 700;
+  color: #0055aa;
+}
+
+/* Progress indicator updates */
+.progress-container {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  height: 4px;
+  background-color: #f0f0f0;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #0066cc, #339933);
+  width: 0%;
+  transition: width 0.2s;
+}
+
+/* Add a floating back-to-top button */
+.back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #0066cc;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 1000;
+}
+
+.back-to-top.visible {
+  opacity: 1;
+}
+
+/* Enhance the tutorial TOC styling */
+.tutorial-toc {
+  background-color: #f8f9fa;
+  border-left: 4px solid #0066cc;
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0;
+  border-radius: 4px;
+  position: sticky;
+  top: 10px;
+  max-height: calc(100vh - 50px);
+  overflow-y: auto;
+}
+
+.tutorial-toc ul {
+  padding-left: 1rem;
+}
+
+.tutorial-toc a {
+  color: #0066cc;
+  display: block;
+  padding: 0.25rem 0;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.tutorial-toc a:hover {
+  color: #004499;
+  text-decoration: underline;
+}
+
+/* Copy Code Button */
+.copy-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  z-index: 5;
+}
+
+.copy-button:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-color: #0066cc;
+}
+
+.copy-button.copied {
+  background-color: #28a745;
+  color: white;
+  border-color: #28a745;
+}
+
+/* Dark Mode Styles */
+body.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+body.dark-mode .section {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+}
+
+body.dark-mode .subsection {
+  background-color: #252525;
+  border-left: 3px solid #61dafb;
+}
+
+body.dark-mode pre,
+body.dark-mode code {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+}
+
+body.dark-mode .live-preview {
+  background-color: #1e1e1e;
+  border-color: #444;
+  color: #e0e0e0;
+}
+
+body.dark-mode .quiz-option {
+  background-color: #252525;
+  border-color: #444;
+  color: #e0e0e0;
+}
+
+body.dark-mode a {
+  color: #61dafb;
+}
+
+body.dark-mode button {
+  background-color: #0066cc;
+  color: #ffffff;
+}
+
+body.dark-mode .dark-mode-toggle {
+  background-color: #f8f9fa;
+  color: #343a40;
+}
+
+/* Navigation button styles */
+.home-navigation {
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.back-navigation {
+  margin-top: 2rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #e0e0e0;
+  text-align: left;
+}
+
+body.dark-mode .home-navigation,
+body.dark-mode .back-navigation {
+  border-color: #444;
+}

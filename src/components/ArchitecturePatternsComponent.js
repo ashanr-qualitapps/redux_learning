@@ -1,26 +1,44 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
+import React, { useState, useEffect } from 'react';
+import { LiveProvider, LiveEditor, LiveError } from 'react-live';
+import TutorialTOC from './TutorialTOC';
+import ExpandableCode from './ExpandableCode';
+import QuizComponent from './QuizComponent';
+import SectionNavigation from './SectionNavigation';
+import ProgressIndicator from './ProgressIndicator';
+import { HomeButton, BackButton, BackToTopButton } from './NavigationButtons';
 
-// Back button component for reuse
-const BackButton = () => {
-  const navigate = useNavigate();
-  return (
-    <button 
-      onClick={() => navigate(-1)} 
-      style={{ marginBottom: '1rem' }}
-    >
-      ← Back
-    </button>
-  );
-};
-
+// Redux Architecture Patterns component
 export const ReduxArchitecturePatternsComponent = () => {
   // Scope for react-live
   const scope = {
     React
   };
+  
+  // State to track active section
+  const [activeSection, setActiveSection] = useState('intro');
+
+  // Effect to update active section based on scroll position
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = document.querySelectorAll('.subsection');
+      const scrollPosition = window.scrollY;
+      
+      // Find the current section
+      let current = 'intro';
+      
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        if(scrollPosition >= sectionTop - 100) {
+          current = section.id;
+        }
+      });
+      
+      setActiveSection(current);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   
   const featureSlicedCode = `
 // Feature-sliced structure example
@@ -252,13 +270,64 @@ dispatch(userEvents.registered({
 // - analytics middleware (log signup event)
 `;
 
+  // Define sections for the TOC
+  const sections = [
+    { id: 'intro', title: 'Introduction' },
+    { id: 'feature-sliced', title: 'Feature-Sliced Design' },
+    { id: 'ducks', title: 'Ducks Pattern' },
+    { id: 'modules', title: 'Redux Modules' },
+    { id: 'event-driven', title: 'Event-Driven Architecture' },
+    { id: 'choosing', title: 'Choosing the Right Pattern' }
+  ];
+  
   return (
     <div className="section">
-      <BackButton />
+      <HomeButton />
       <h2><span className="topic-date">2025-06-03</span> Redux Architecture Patterns</h2>
       <p>Effective ways to organize and structure your Redux codebase for better maintainability</p>
       
-      <div className="subsection">
+      {/* Add reading time indicator */}
+      <div className="reading-time">
+        <i>⏱️</i> Reading time: ~15 minutes
+      </div>
+      
+      {/* Add progress indicator */}
+      <ProgressIndicator />
+      
+      {/* Add Table of Contents */}
+      <TutorialTOC 
+        sections={sections} 
+        activeSection={activeSection}
+      />
+      
+      <div id="intro" className="subsection">
+        <span className="section-anchor"></span>
+        <h3>Introduction to Redux Architecture Patterns</h3>
+        <p>
+          As Redux applications grow in size and complexity, it becomes increasingly important to 
+          adopt consistent patterns for organizing your code. This tutorial explores four powerful 
+          patterns that can help keep your Redux codebase maintainable and scalable.
+        </p>
+        
+        {/* Add a key points summary */}
+        <div className="key-points">
+          <h3>Why Architecture Matters</h3>
+          <ul>
+            <li>Improves developer experience and onboarding</li>
+            <li>Makes the codebase more maintainable</li>
+            <li>Reduces bugs by enforcing consistency</li>
+            <li>Helps teams collaborate more effectively</li>
+          </ul>
+        </div>
+        
+        <SectionNavigation
+          nextSection="feature-sliced"
+          nextTitle="Feature-Sliced Design"
+        />
+      </div>
+      
+      <div id="feature-sliced" className="subsection">
+        <span className="section-anchor"></span>
         <h3>1. Feature-Sliced Design: Organizing by domains/features</h3>
         <p>
           Feature-Sliced Design is an architectural methodology that organizes code by features 
@@ -296,12 +365,23 @@ dispatch(userEvents.registered({
         </pre>
 
         <h4>Example Implementation:</h4>
-        <LiveProvider code={featureSlicedCode} scope={scope} noInline={false}>
-          <div className="live-editor-container">
-            <LiveEditor className="live-editor" />
-          </div>
-          <LiveError className="live-error" />
-        </LiveProvider>
+        {/* Add concept visualization */}
+        <div className="concept-diagram">
+          <img 
+            src="https://via.placeholder.com/800x400?text=Feature+Sliced+Design+Visualization" 
+            alt="Feature Sliced Design Architecture Diagram" 
+          />
+        </div>
+        
+        {/* Use expandable code for example */}
+        <ExpandableCode title="Complete Feature-Sliced Example">
+          <LiveProvider code={featureSlicedCode} scope={scope} noInline={false}>
+            <div className="live-editor-container">
+              <LiveEditor className="live-editor" />
+            </div>
+            <LiveError className="live-error" />
+          </LiveProvider>
+        </ExpandableCode>
 
         <h4>Benefits:</h4>
         <ul>
@@ -310,9 +390,17 @@ dispatch(userEvents.registered({
           <li>Easier to understand the codebase by feature</li>
           <li>Improved scalability for large applications</li>
         </ul>
+        
+        <SectionNavigation
+          prevSection="intro"
+          prevTitle="Introduction"
+          nextSection="ducks"
+          nextTitle="Ducks Pattern"
+        />
       </div>
 
-      <div className="subsection">
+      <div id="ducks" className="subsection">
+        <span className="section-anchor"></span>
         <h3>2. Ducks Pattern: Grouping related Redux code</h3>
         <p>
           The Ducks pattern, introduced by Erik Rasmussen, proposes bundling all related Redux code (actions, 
@@ -329,12 +417,27 @@ dispatch(userEvents.registered({
         </ol>
 
         <h4>Example Implementation:</h4>
-        <LiveProvider code={ducksPatternCode} scope={scope} noInline={false}>
-          <div className="live-editor-container">
-            <LiveEditor className="live-editor" />
-          </div>
-          <LiveError className="live-error" />
-        </LiveProvider>
+        <ExpandableCode title="Ducks Pattern Example">
+          <LiveProvider code={ducksPatternCode} scope={scope} noInline={false}>
+            <div className="live-editor-container">
+              <LiveEditor className="live-editor" />
+            </div>
+            <LiveError className="live-error" />
+          </LiveProvider>
+        </ExpandableCode>
+
+        {/* Add an interactive quiz after ducks section */}
+        <QuizComponent
+          question="Which of the following is NOT a rule of the Ducks pattern?"
+          options={[
+            "Must export a default function called reducer()",
+            "Must export action creators as functions",
+            "Must keep UI components in the same file",
+            "Must have action types in the format app/feature/ACTION_TYPE"
+          ]}
+          correctAnswer={2}
+          explanation="The Ducks pattern focuses on grouping Redux logic (reducers, actions, types) together, but UI components are typically kept separate."
+        />
 
         <h4>Benefits:</h4>
         <ul>
@@ -343,9 +446,17 @@ dispatch(userEvents.registered({
           <li>Self-contained modules that can be reasoned about independently</li>
           <li>Improved maintainability for medium-sized applications</li>
         </ul>
+        
+        <SectionNavigation
+          prevSection="feature-sliced"
+          prevTitle="Feature-Sliced Design"
+          nextSection="modules"
+          nextTitle="Redux Modules"
+        />
       </div>
 
-      <div className="subsection">
+      <div id="modules" className="subsection">
+        <span className="section-anchor"></span>
         <h3>3. Redux Modules: Encapsulated state management</h3>
         <p>
           The Redux Modules pattern takes encapsulation further by creating modules with public APIs and 
@@ -360,12 +471,14 @@ dispatch(userEvents.registered({
         </ul>
 
         <h4>Example Implementation:</h4>
-        <LiveProvider code={reduxModulesCode} scope={scope} noInline={false}>
-          <div className="live-editor-container">
-            <LiveEditor className="live-editor" />
-          </div>
-          <LiveError className="live-error" />
-        </LiveProvider>
+        <ExpandableCode title="Redux Modules Example">
+          <LiveProvider code={reduxModulesCode} scope={scope} noInline={false}>
+            <div className="live-editor-container">
+              <LiveEditor className="live-editor" />
+            </div>
+            <LiveError className="live-error" />
+          </LiveProvider>
+        </ExpandableCode>
 
         <h4>Benefits:</h4>
         <ul>
@@ -374,9 +487,17 @@ dispatch(userEvents.registered({
           <li>Clear, controlled API surface for each module</li>
           <li>Better maintainability in complex applications with many contributors</li>
         </ul>
+        
+        <SectionNavigation
+          prevSection="ducks"
+          prevTitle="Ducks Pattern"
+          nextSection="event-driven"
+          nextTitle="Event-Driven Architecture"
+        />
       </div>
 
-      <div className="subsection">
+      <div id="event-driven" className="subsection">
+        <span className="section-anchor"></span>
         <h3>4. Event-Driven Architecture: Redux as an event bus</h3>
         <p>
           Event-Driven Architecture treats Redux actions as events rather than commands. In this pattern, 
@@ -391,12 +512,54 @@ dispatch(userEvents.registered({
         </ul>
 
         <h4>Example Implementation:</h4>
-        <LiveProvider code={eventDrivenCode} scope={scope} noInline={false}>
-          <div className="live-editor-container">
-            <LiveEditor className="live-editor" />
+        <ExpandableCode title="Event-Driven Architecture Example">
+          <LiveProvider code={eventDrivenCode} scope={scope} noInline={false}>
+            <div className="live-editor-container">
+              <LiveEditor className="live-editor" />
+            </div>
+            <LiveError className="live-error" />
+          </LiveProvider>
+        </ExpandableCode>
+
+        <h4>Commands vs Events</h4>
+        <div className="code-comparison">
+          <div>
+            <h4>Command-Based Approach</h4>
+            <pre>{`// Command: tells what to do
+dispatch({
+  type: 'ADD_USER_TO_STATE',
+  payload: userData
+});
+
+// Single reducer handles it
+case 'ADD_USER_TO_STATE':
+  return {
+    ...state,
+    users: [...state.users, action.payload]
+  };`}</pre>
           </div>
-          <LiveError className="live-error" />
-        </LiveProvider>
+          <div>
+            <h4>Event-Based Approach</h4>
+            <pre>{`// Event: tells what happened
+dispatch(userEvents.registered(userData));
+
+// Multiple reducers can respond
+// In profileReducer:
+case USER_EVENTS.REGISTERED:
+  return { ...state, profile: action.payload };
+  
+// In authReducer:
+case USER_EVENTS.REGISTERED:
+  return { ...state, isLoggedIn: true };
+  
+// In notificationsReducer:
+case USER_EVENTS.REGISTERED:
+  return { ...state, 
+    messages: [...state.messages, 
+      { text: 'Welcome!', type: 'success' }] 
+  };`}</pre>
+          </div>
+        </div>
 
         <h4>Benefits:</h4>
         <ul>
@@ -405,9 +568,17 @@ dispatch(userEvents.registered({
           <li>More extensible system - new features can listen to existing events</li>
           <li>Easier to implement cross-cutting concerns (logging, analytics)</li>
         </ul>
+        
+        <SectionNavigation
+          prevSection="modules"
+          prevTitle="Redux Modules"
+          nextSection="choosing"
+          nextTitle="Choosing the Right Pattern"
+        />
       </div>
 
-      <div className="subsection">
+      <div id="choosing" className="subsection">
+        <span className="section-anchor"></span>
         <h3>Choosing the Right Pattern</h3>
         <p>
           The best architecture pattern depends on your application size, team structure, and specific needs:
@@ -423,7 +594,27 @@ dispatch(userEvents.registered({
           For example, you might use Feature-Sliced Design for overall organization while implementing
           each feature's Redux code using the Ducks pattern.
         </p>
+        
+        <SectionNavigation
+          prevSection="event-driven"
+          prevTitle="Event-Driven Architecture"
+        />
       </div>
+
+      {/* Add key takeaways section */}
+      <div className="key-points">
+        <h3>Key Takeaways</h3>
+        <ul>
+          <li><strong>Feature-Sliced Design</strong> works best for large applications with clear domain boundaries</li>
+          <li><strong>Ducks Pattern</strong> simplifies Redux code organization for small to medium projects</li>
+          <li><strong>Redux Modules</strong> provide strong encapsulation and are great for shared libraries</li>
+          <li><strong>Event-Driven Architecture</strong> enables loose coupling and works well for complex business processes</li>
+          <li>Consider combining patterns to address specific needs in your application</li>
+        </ul>
+      </div>
+      
+      <BackButton />
+      <BackToTopButton />
     </div>
   );
 };

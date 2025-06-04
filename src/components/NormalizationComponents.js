@@ -393,7 +393,7 @@ const PostDetail = ({ postId }) => {
   );
 };
 
-const normalizationTopics = [
+export const normalizationTopics = [
   {
     id: 'manual-normalization',
     concept: 'Manual Normalized State Example',

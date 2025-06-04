@@ -62,6 +62,19 @@ This project demonstrates:
 | <a href="https://react-redux.js.org/api/hooks">React-Redux integration with hooks</a>        | Using React hooks to interact with Redux store       |
 | <a href="https://redux.js.org/usage/writing-logic-thunks">Async operations using Redux Thunk middleware</a> | Handling asynchronous logic in Redux                 |
 | <a href="https://github.com/rt2zz/redux-persist">Redux Persist</a> | Persistently storing Redux state across sessions    |
+| <a href="https://feature-sliced.design/">Redux Architecture Patterns</a> | Organizing Redux code for better maintainability    |
+
+## Advanced Topics
+
+This project also covers advanced Redux concepts:
+
+- Normalization of state
+- Memoized selectors with Reselect
+- Advanced caching with re-reselect
+- Feature-Sliced Design pattern
+- Ducks pattern
+- Redux modules
+- Event-driven architecture
 
 ## Learn More
 
@@ -69,3 +82,4 @@ This project demonstrates:
 - [Redux documentation](https://redux.js.org/)
 - [React Redux documentation](https://react-redux.js.org/)
 - [Redux Persist documentation](https://github.com/rt2zz/redux-persist)
+- [Feature Sliced Design](https://feature-sliced.design/)

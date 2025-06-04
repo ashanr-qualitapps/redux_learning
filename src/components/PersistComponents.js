@@ -1,8 +1,8 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux'; // useDispatch was missing from imports but used in scope
-import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
 import { getReduxPersistTopic } from '../store/reducers/tableTopicsReducer';
+import { HomeButton, BackButton } from './NavigationButtons';
 
 // Import dependencies for react-live scope
 import { createStore } from 'redux';
@@ -10,19 +10,6 @@ import { Provider } from 'react-redux';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; // For localStorage
 import { PersistGate } from 'redux-persist/integration/react';
-
-// Back button component for reuse
-const BackButton = () => {
-  const navigate = useNavigate();
-  return (
-    <button 
-      onClick={() => navigate(-1)} 
-      style={{ marginBottom: '1rem' }}
-    >
-      ← Back
-    </button>
-  );
-};
 
 export const ReduxPersistComponent = () => {
   const persistTopic = useSelector(getReduxPersistTopic);
@@ -126,8 +113,8 @@ render(
   };
   
   return (
-    <div className="section"> {/* Changed from content-container to section for consistency */}
-      <BackButton /> {/* Added BackButton */}
+    <div className="section">
+      <HomeButton />
       <h2>{persistTopic?.title || 'Redux Persist'}</h2>
       <p>{persistTopic?.description || 'Persistently store Redux state across application sessions'}</p>
       
@@ -247,6 +234,7 @@ const persistConfig = {
           Additionally, Redux DevTools will show a <code>persist/REHYDRATE</code> action when the state is restored, allowing you to inspect the rehydrated state.
         </p>
       </div>
+      <BackButton />
     </div>
   );
 };

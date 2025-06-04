@@ -1,25 +1,12 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import Counter from './Counter';
 import TodoList from './TodoList';
-
-// Back button component for reuse
-const BackButton = () => {
-  const navigate = useNavigate();
-  return (
-    <button 
-      onClick={() => navigate(-1)} 
-      style={{ marginBottom: '1rem' }}
-    >
-      ← Back
-    </button>
-  );
-};
+import { HomeButton, BackButton } from './NavigationButtons';
 
 export const ActionsComponent = () => {
   return (
     <div className="section">
-      <BackButton />
+      <HomeButton />
       <h2>Actions and Action Creators</h2>
       <p>Actions are plain JavaScript objects that represent an intention to change state. 
          Action creators are functions that create and return action objects.</p>
@@ -36,6 +23,7 @@ export const ActionsComponent = () => {
       
       <p>Below is a live example of dispatching actions with our Counter component:</p>
       <Counter />
+      <BackButton />
     </div>
   );
 };
@@ -43,7 +31,7 @@ export const ActionsComponent = () => {
 export const ReducersComponent = () => {
   return (
     <div className="section">
-      <BackButton />
+      <HomeButton />
       <h2>Reducers</h2>
       <p>Reducers are pure functions that take the current state and an action as arguments, 
          and return a new state. They specify how the application's state changes in response to actions.</p>
@@ -63,6 +51,8 @@ export const ReducersComponent = () => {
 };`}
         </pre>
       </div>
+      
+      <BackButton />
     </div>
   );
 };
@@ -70,7 +60,7 @@ export const ReducersComponent = () => {
 export const StoreComponent = () => {
   return (
     <div className="section">
-      <BackButton />
+      <HomeButton />
       <h2>Store</h2>
       <p>The Redux store brings together the state, actions, and reducers. 
          The store has the following responsibilities:</p>
@@ -91,6 +81,8 @@ import rootReducer from './reducers';
 const store = createStore(rootReducer);`}
         </pre>
       </div>
+      
+      <BackButton />
     </div>
   );
 };
@@ -98,7 +90,7 @@ const store = createStore(rootReducer);`}
 export const HooksComponent = () => {
   return (
     <div className="section">
-      <BackButton />
+      <HomeButton />
       <h2>React-Redux Integration with Hooks</h2>
       <p>React-Redux provides hooks that allow your React components to interact with the Redux store.</p>
       
@@ -128,6 +120,7 @@ function Counter() {
       
       <p>Live example with hooks:</p>
       <Counter />
+      <BackButton />
     </div>
   );
 };
@@ -135,7 +128,7 @@ function Counter() {
 export const ThunksComponent = () => {
   return (
     <div className="section">
-      <BackButton />
+      <HomeButton />
       <h2>Async Operations using Redux Thunk</h2>
       <p>Redux Thunk middleware allows you to write action creators that return a function instead of an action. 
          This is particularly useful for asynchronous operations like API calls.</p>
@@ -166,6 +159,7 @@ export const ThunksComponent = () => {
       
       <p>Live example with async actions:</p>
       <TodoList />
+      <BackButton />
     </div>
   );
 };
@@ -173,7 +167,7 @@ export const ThunksComponent = () => {
 export const MiddlewareComponent = () => {
   return (
     <div className="section">
-      <BackButton />
+      <HomeButton />
       <h2>Redux Middleware</h2>
       <p>Middleware provides a third-party extension point between dispatching an action and the moment it reaches the reducer. 
         Middleware can be used for logging, crash reporting, talking to an asynchronous API, routing, and more.</p>
@@ -203,6 +197,8 @@ const store = createStore(
         <li><code>redux-observable</code>: Uses RxJS for reactive programming</li>
         <li><code>redux-logger</code>: Logs actions and state</li>
       </ul>
+      
+      <BackButton />
     </div>
   );
 };
@@ -210,7 +206,7 @@ const store = createStore(
 export const ReduxThunkComponent = () => {
   return (
     <div className="section">
-      <BackButton />
+      <HomeButton />
       <h2>Redux-Thunk In Depth</h2>
       <p>Redux Thunk middleware allows you to write action creators that return a function instead of an action object. 
          The thunk can be used to delay the dispatch of an action, or to dispatch only if certain conditions are met.</p>
@@ -251,6 +247,8 @@ const fetchUserAndTheirPosts = (userId) => async (dispatch) => {
       </div>
       
       <p>Thunk is great for simple async operations but can become unwieldy for complex async flows.</p>
+      
+      <BackButton />
     </div>
   );
 };
@@ -258,7 +256,7 @@ const fetchUserAndTheirPosts = (userId) => async (dispatch) => {
 export const ReduxSagaComponent = () => {
   return (
     <div className="section">
-      <BackButton />
+      <HomeButton />
       <h2>Redux Saga</h2>
       <p>Redux Saga is a middleware library that aims to make application side effects 
          (i.e., asynchronous operations like data fetching) easier to manage, more efficient 
@@ -300,6 +298,8 @@ function* todoSaga() {
         <li>Can handle complex async flows like race conditions</li>
         <li>Provides cancellation, throttling, and debouncing</li>
       </ul>
+      
+      <BackButton />
     </div>
   );
 };
@@ -307,7 +307,7 @@ function* todoSaga() {
 export const ReduxObservableComponent = () => {
   return (
     <div className="section">
-      <BackButton />
+      <HomeButton />
       <h2>Redux Observable</h2>
       <p>Redux Observable is middleware for Redux that uses RxJS to create side effects for asynchronous actions.
          It introduces "Epics" - functions that listen for actions and dispatch new actions in response.</p>
@@ -352,6 +352,8 @@ const fetchTodosEpic = action$ => action$.pipe(
         <li>Can easily cancel, debounce, retry operations</li>
         <li>Good for complex operations like autocomplete search</li>
       </ul>
+      
+      <BackButton />
     </div>
   );
 };

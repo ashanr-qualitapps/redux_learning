@@ -327,7 +327,7 @@ const TodoList = () => {
   );
 };
 
-const reselectTopics = [
+export const reselectTopics = [
   {
     id: 'basic-reselect',
     concept: 'Basic Reselect Example',
