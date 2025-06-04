@@ -75,6 +75,11 @@ This project also covers advanced Redux concepts:
 - Ducks pattern
 - Redux modules
 - Event-driven architecture
+- Building custom middleware
+- Redux performance optimization
+- Mastering Redux DevTools
+- State machines with Redux
+- Form management strategies
 
 ## Learn More
 
@@ -83,3 +88,4 @@ This project also covers advanced Redux concepts:
 - [React Redux documentation](https://react-redux.js.org/)
 - [Redux Persist documentation](https://github.com/rt2zz/redux-persist)
 - [Feature Sliced Design](https://feature-sliced.design/)
+- [XState (for state machines)](https://xstate.js.org/)

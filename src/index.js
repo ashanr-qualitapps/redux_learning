@@ -323,10 +323,6 @@ const HomePage = () => {
 
   return (
     <div className="homepage-container">
-      <h2 className="homepage-header">Learning Redux</h2>
-      <p className="homepage-intro">This is a simple application demonstrating Redux concepts.</p>
-      
-      {/* Unified table with all concepts */}
       <ConceptTable allConcepts={allConcepts} />
     </div>
   );
