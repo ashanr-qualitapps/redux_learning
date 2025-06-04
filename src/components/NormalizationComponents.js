@@ -392,3 +392,30 @@ const PostDetail = ({ postId }) => {
     </div>
   );
 };
+
+const normalizationTopics = [
+  {
+    id: 'manual-normalization',
+    concept: 'Manual Normalized State Example',
+    description: 'How to structure normalized state manually',
+    category: 'normalization',
+    parent: 'normalization',
+    order: 10.1
+  },
+  {
+    id: 'normalizr',
+    concept: 'Using Normalizr Library',
+    description: 'Simplifying normalization with Normalizr',
+    category: 'normalization',
+    parent: 'normalization',
+    order: 10.2
+  },
+  {
+    id: 'entity-adapter',
+    concept: 'Redux Toolkit: createEntityAdapter',
+    description: 'Modern approach to managing normalized entities',
+    category: 'normalization',
+    parent: 'normalization',
+    order: 10.3
+  }
+];

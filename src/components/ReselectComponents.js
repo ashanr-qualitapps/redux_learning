@@ -326,3 +326,30 @@ const TodoList = () => {
     </div>
   );
 };
+
+const reselectTopics = [
+  {
+    id: 'basic-reselect',
+    concept: 'Basic Reselect Example',
+    description: 'Introduction to memoized selectors',
+    category: 'reselect',
+    parent: 'reselect',
+    order: 11.1
+  },
+  {
+    id: 'parameterized-selectors',
+    concept: 'Selectors with Parameters',
+    description: 'Creating selectors that accept arguments',
+    category: 'reselect',
+    parent: 'reselect',
+    order: 11.2
+  },
+  {
+    id: 'filtering-todos',
+    concept: 'Practical Example: Filtering Todos',
+    description: 'Using Reselect for filtered lists',
+    category: 'reselect',
+    parent: 'reselect',
+    order: 11.3
+  }
+];

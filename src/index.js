@@ -24,51 +24,59 @@ import {
   EntityRelationshipsComponent,
   WebSocketsComponent
 } from './components/AdvancedTopics';
+import { ReduxArchitecturePatternsComponent } from './components/ArchitecturePatternsComponent';
 
 // Add category field to core concepts for filtering and display
 const coreReduxConcepts = [
   {
+    id: 'store',
+    concept: 'Store',
+    description: 'The object that brings actions and reducers together',
+    category: 'core',
+    order: 1
+  },
+  {
     id: 'actions',
     concept: 'Actions and Action Creators',
     description: 'Functions that create actions to update state',
-    category: 'core'
+    category: 'core',
+    order: 2
   },
   {
     id: 'reducers',
     concept: 'Reducers',
     description: 'Functions that determine how state changes',
-    category: 'core'
-  },
-  {
-    id: 'store',
-    concept: 'Store',
-    description: 'The object that brings actions and reducers together',
-    category: 'core'
+    category: 'core',
+    order: 3
   },
   {
     id: 'hooks',
     concept: 'React-Redux integration with hooks',
     description: 'Using React hooks to interact with Redux store',
-    category: 'core'
+    category: 'core',
+    order: 4
   },
   {
     id: 'middleware',
     concept: 'Middleware',
     description: 'Extending Redux with custom functionality',
-    category: 'core'
+    category: 'core',
+    order: 5
   },
   {
     id: 'thunks',
     concept: 'Async operations using Redux Thunk middleware',
     description: 'Handling asynchronous logic in Redux',
-    category: 'core'
+    category: 'core',
+    order: 6
   },
   {
     id: 'redux-persist',
     concept: 'Redux Persist',
     description: 'Persistently store Redux state across application sessions',
     category: 'core',
-    date: '2025-06-02'
+    date: '2025-06-02',
+    order: 12
   }
 ];
 
@@ -78,87 +86,109 @@ const advancedReduxTopics = [
     id: 'redux-thunk',
     concept: 'Redux-Thunk in depth',
     description: 'Function-based middleware for async actions',
-    category: 'middleware'
+    category: 'middleware',
+    order: 7
   },
   {
     id: 'redux-saga',
     concept: 'Redux Saga',
     description: 'Generator-based middleware for complex async flows',
-    category: 'middleware'
+    category: 'middleware',
+    order: 8
   },
   {
     id: 'redux-observable',
     concept: 'Redux Observable',
     description: 'RxJS-powered middleware for reactive programming',
-    category: 'middleware'
+    category: 'middleware',
+    order: 9
   },
   {
     id: 'normalization',
     concept: 'Normalization of State',
     description: 'Techniques for structuring state for efficiency',
-    category: 'advanced'
+    category: 'advanced',
+    order: 10
   },
   {
     id: 'reselect',
     concept: 'Reselect and Memoization',
     description: 'Performance optimization with memoized selectors',
-    category: 'advanced'
+    category: 'advanced',
+    order: 11
+  },
+  {
+    id: 'redux-toolkit',
+    concept: 'Redux Toolkit',
+    description: 'Official, opinionated toolset for Redux development',
+    category: 'implementation',
+    order: 13
+  },
+  {
+    id: 'immutable-patterns',
+    concept: 'Immutable Update Patterns',
+    description: 'Techniques for maintaining state immutability',
+    category: 'implementation',
+    order: 14
   },
   {
     id: 're-reselect',
     concept: 'Advanced: Caching with re-reselect',
     description: 'Enhanced selector caching for complex applications',
-    category: 'advanced'
+    category: 'advanced',
+    order: 15
+  },
+  {
+    id: 'architecture-patterns',
+    concept: 'Redux Architecture Patterns',
+    description: 'Effective ways to organize and structure your Redux codebase for better maintainability',
+    category: 'advanced',
+    date: '2025-06-03',
+    order: 16
   },
   {
     id: 'entity-relationships',
     concept: 'Entity Relationships',
     description: 'Managing complex entity relationships in a normalized state',
     category: 'advanced',
-    date: '2025-05-29'
+    date: '2025-05-29',
+    order: 17
+  },
+  {
+    id: 'testing-redux',
+    concept: 'Testing Redux Logic',
+    description: 'Best practices for testing Redux code',
+    category: 'implementation',
+    order: 18
+  },
+  {
+    id: 'typescript',
+    concept: 'Integration with TypeScript',
+    description: 'Adding static typing to Redux applications',
+    category: 'implementation',
+    order: 19
+  },
+  {
+    id: 'dynamic-reducers',
+    concept: 'Code Splitting and Dynamic Reducers',
+    description: 'Loading Redux modules on demand',
+    category: 'implementation',
+    order: 20
+  },
+  {
+    id: 'ssr',
+    concept: 'Server-Side Rendering with Redux',
+    description: 'Rendering Redux apps on the server',
+    category: 'implementation',
+    order: 21
   },
   {
     id: 'websockets',
     concept: 'Redux with WebSockets',
     description: 'Using Redux with real-time data via WebSockets',
     category: 'middleware',
-    date: '2025-05-29'
-  },
-  {
-    id: 'dynamic-reducers',
-    concept: 'Code Splitting and Dynamic Reducers',
-    description: 'Loading Redux modules on demand',
-    category: 'implementation'
-  },
-  {
-    id: 'redux-toolkit',
-    concept: 'Redux Toolkit',
-    description: 'Official, opinionated toolset for Redux development',
-    category: 'implementation'
-  },
-  {
-    id: 'immutable-patterns',
-    concept: 'Immutable Update Patterns',
-    description: 'Techniques for maintaining state immutability',
-    category: 'implementation'
-  },
-  {
-    id: 'testing-redux',
-    concept: 'Testing Redux Logic',
-    description: 'Best practices for testing Redux code',
-    category: 'implementation'
-  },
-  {
-    id: 'typescript',
-    concept: 'Integration with TypeScript',
-    description: 'Adding static typing to Redux applications',
-    category: 'implementation'
-  },
-  {
-    id: 'ssr',
-    concept: 'Server-Side Rendering with Redux',
-    description: 'Rendering Redux apps on the server',
-    category: 'implementation'
+    date: '2025-05-29',
+    order: 22
   }
 ];
 
@@ -213,8 +243,11 @@ const reselectTopics = [
 
 // Replace the separate ConceptTable component with a more generic version that handles categories
 const ConceptTable = ({ allConcepts }) => {
+  // Sort concepts by order property
+  const sortedConcepts = [...allConcepts].sort((a, b) => (a.order || 100) - (b.order || 100));
+  
   // Group the concepts by category
-  const groupedConcepts = allConcepts.reduce((acc, concept) => {
+  const groupedConcepts = sortedConcepts.reduce((acc, concept) => {
     if (!acc[concept.category]) {
       acc[concept.category] = [];
     }
@@ -345,6 +378,9 @@ const App = () => {
               
               {/* Add Redux Persist Route */}
               <Route path="/concepts/redux-persist" element={<ReduxPersistComponent />} />
+              
+              {/* Add Architecture Patterns Route */}
+              <Route path="/concepts/architecture-patterns" element={<ReduxArchitecturePatternsComponent />} />
             </Routes>
           </Layout>
         </Router>

@@ -157,3 +157,41 @@ table th {
   margin-right: 1rem;
   vertical-align: middle;
 }
+
+/* Styles for react-live */
+.live-editor-container {
+  margin-bottom: 10px;
+  border-radius: 4px;
+  overflow: hidden; /* Ensures border-radius is applied to the editor inside */
+}
+
+.live-editor {
+  background-color: #282c34 !important; /* Match example-box pre style */
+  color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 4px;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 0.9em;
+  overflow: auto;
+  min-height: 200px; /* Give some space for editing */
+}
+
+.live-error {
+  background-color: #ffdddd;
+  color: #d8000c;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  white-space: pre-wrap; /* Allow error messages to wrap */
+}
+
+.live-preview {
+  padding: 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background-color: #ffffff;
+}
+
+.live-preview button {
+  margin-top: 5px; /* Add some margin to buttons in preview */
+}

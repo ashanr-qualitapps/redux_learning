@@ -15,6 +15,13 @@ const initialState = {
       id: 'redux-persist',
       title: 'Redux Persist',
       description: 'Persistently store Redux state across application sessions'
+    },
+    {
+      id: 'architecture-patterns',
+      title: 'Redux Architecture Patterns',
+      description: 'Effective ways to organize and structure your Redux codebase for better maintainability',
+      category: 'advanced',
+      date: '2025-06-03'
     }
   ],
   loading: false,
