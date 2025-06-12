@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { createSelector } from 'reselect';
+import { Link } from 'react-router-dom';
+import { HomeButton } from './NavigationButtons';
 
 // Main Reselect Component
 export const ReselectComponent = () => {
   return (
     <div className="section">
+      <HomeButton />
       <h2>Reselect and Memoization</h2>
       <p>
         Reselect is a library for creating memoized selector functions. Memoization helps
@@ -27,6 +30,13 @@ export const ReselectComponent = () => {
         <li><a className="concept-link" href="/concepts/reselect/parameterized-selectors">Selectors with Parameters</a></li>
         <li><a className="concept-link" href="/concepts/reselect/filtering-todos">Practical Example: Filtering Todos</a></li>
       </ul>
+
+      <div className="navigation-buttons" style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div></div>
+        <Link to="/concepts/reselect/basic-reselect" className="next-button">
+          Next: Basic Reselect Example
+        </Link>
+      </div>
     </div>
   );
 };
@@ -95,6 +105,15 @@ const UserTodos = () => {
       </ol>
 
       <p>This greatly improves performance in Redux applications by avoiding unnecessary recalculations.</p>
+
+      <div className="navigation-buttons">
+        <Link to="/concepts/reselect" className="back-button">
+          Back: Reselect and Memoization
+        </Link>
+        <Link to="/concepts/reselect/parameterized-selectors" className="next-button">
+          Next: Selectors with Parameters
+        </Link>
+      </div>
     </div>
   );
 };
@@ -180,6 +199,15 @@ const Dashboard = () => {
     </div>
   );
 };`}</pre>
+      </div>
+
+      <div className="navigation-buttons">
+        <Link to="/concepts/reselect/basic-reselect" className="back-button">
+          Back: Basic Reselect Example
+        </Link>
+        <Link to="/concepts/reselect/filtering-todos" className="next-button">
+          Next: Practical Example: Filtering Todos
+        </Link>
       </div>
     </div>
   );
@@ -323,6 +351,13 @@ const TodoList = () => {
         <li>With Reselect: Filtering only runs when todos or filter changes</li>
         <li>Benefit increases with larger lists or more expensive calculations</li>
       </ul>
+
+      <div className="navigation-buttons">
+        <Link to="/concepts/reselect/parameterized-selectors" className="back-button">
+          Back: Selectors with Parameters
+        </Link>
+        <div></div>
+      </div>
     </div>
   );
 };

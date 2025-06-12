@@ -7,7 +7,7 @@ import Counter from './components/Counter';
 import TodoList from './components/TodoList';
 import HomePage from './components/HomePage';
 import { RTKQueryComponent } from './components/RTKQueryComponent';
-import { UndoRedoPatternComponent } from './components/AdvancedTopics';
+import { UndoRedoPatternComponent } from './components/SpecializedPatterns';
 import './App.css';
 import { 
   ActionsComponent, 
@@ -41,10 +41,14 @@ import {
   SSRReduxComponent,
   EntityRelationshipsComponent,
   WebSocketsComponent,
-  // Import the BFFPatternComponent
-  BFFPatternComponent
+  // Remove this import as we're now importing from SpecializedPatterns
+  // BFFPatternComponent
 } from './components/AdvancedTopics';
 import { ReduxArchitecturePatternsComponent } from './components/ArchitecturePatternsComponent';
+import { ReactTutorialComponent } from './components/ReactTutorialComponent';
+
+// Import the BFFPatternComponent from SpecializedPatterns
+import { BFFPatternComponent } from './components/SpecializedPatterns';
 
 // Import React-Redux integration components
 import { 
@@ -106,6 +110,9 @@ function App() {
               
               {/* Add Architecture Patterns Route */}
               <Route path="/concepts/architecture-patterns" element={<ReduxArchitecturePatternsComponent />} />
+              
+              {/* Add React Fundamentals Tutorial Route */}
+              <Route path="/concepts/react-fundamentals" element={<ReactTutorialComponent />} />
               
               {/* RTK Query route */}
               <Route path="/concepts/rtk-query" element={<RTKQueryComponent />} />

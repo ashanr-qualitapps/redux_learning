@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 // Main component for Normalization
 export const NormalizationComponent = () => {
@@ -32,6 +33,13 @@ export const NormalizationComponent = () => {
         <li><a className="concept-link" href="/concepts/normalization/normalizr">Using Normalizr Library</a></li>
         <li><a className="concept-link" href="/concepts/normalization/entity-adapter">Redux Toolkit: createEntityAdapter</a></li>
       </ul>
+
+      <div className="navigation-buttons">
+        <div></div>
+        <Link to="/concepts/normalization/manual-normalization" className="next-button">
+          Next: Manual Normalized State Example
+        </Link>
+      </div>
     </div>
   );
 };
@@ -138,6 +146,15 @@ const postsReducer = (state = { byId: {}, allIds: [] }, action) => {
       return state;
   }
 }`}</pre>
+
+      <div className="navigation-buttons">
+        <Link to="/concepts/normalization" className="back-button">
+          Back: Normalization of State
+        </Link>
+        <Link to="/concepts/normalization/normalizr" className="next-button">
+          Next: Using Normalizr Library
+        </Link>
+      </div>
     </div>
   );
 };
@@ -264,6 +281,15 @@ const reducer = (state = { users: {}, posts: {}, comments: {} }, action) => {
       return state;
   }
 };`}</pre>
+
+      <div className="navigation-buttons">
+        <Link to="/concepts/normalization/manual-normalization" className="back-button">
+          Back: Manual Normalized State Example
+        </Link>
+        <Link to="/concepts/normalization/entity-adapter" className="next-button">
+          Next: Redux Toolkit: createEntityAdapter
+        </Link>
+      </div>
     </div>
   );
 };
@@ -389,6 +415,13 @@ const PostDetail = ({ postId }) => {
         <li>Handles normalization automatically</li>
         <li>Supports sorting out of the box</li>
       </ul>
+
+      <div className="navigation-buttons">
+        <Link to="/concepts/normalization/normalizr" className="back-button">
+          Back: Using Normalizr Library
+        </Link>
+        <div></div>
+      </div>
     </div>
   );
 };

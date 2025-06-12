@@ -107,3 +107,50 @@
 .comparison-table th {
   background-color: #f2f2f2;
 }
+
+/* Navigation buttons for section navigation */
+.navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.back-button, .next-button {
+  padding: 10px 16px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.back-button {
+  color: #fff;
+  background-color: #764abc;
+}
+
+.next-button {
+  color: #fff;
+  background-color: #764abc;
+}
+
+.back-button:hover {
+  background-color: #5f3b9a;
+}
+
+.next-button:hover {
+  background-color: #5f3b9a;
+}
+
+.back-button::before {
+  content: "←";
+  margin-right: 8px;
+}
+
+.next-button::after {
+  content: "→";
+  margin-left: 8px;
+}

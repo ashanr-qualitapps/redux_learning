@@ -1,6 +1,6 @@
 import React from 'react';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
-import { HomeButton, BackButton } from './NavigationButtons';
+import { HomeButton, BackButton, NextButton } from './NavigationButtons';
 
 export const RTKQueryComponent = () => {
   // For react-live code examples
@@ -705,16 +705,19 @@ const InfinitePostsList = () => {
       </ul>
 
       <div className="warning-box">
-        <h4>Common Pitfalls</h4>
+        <h4>Common Gotchas</h4>
         <ul>
-          <li><strong>Over-fetching</strong> - Be careful not to trigger too many queries in a single component</li>
-          <li><strong>Cache lifetime</strong> - By default, unused data is removed after 60 seconds. Configure this with <code>keepUnusedDataFor</code></li>
-          <li><strong>Webhook integration</strong> - For real-time updates, consider using the <code>onCacheEntryAdded</code> lifecycle to set up WebSocket subscriptions</li>
-          <li><strong>Large responses</strong> - For very large datasets, consider pagination or infinite scrolling</li>
+          <li><strong>Don't overuse RTK Query:</strong> It's designed for server state, not client state</li>
+          <li><strong>Cache key serialization:</strong> Be careful with object arguments that might not serialize consistently</li>
+          <li><strong>Tag invalidation:</strong> Make sure your tag strategies don't cause unnecessary refetches</li>
+          <li><strong>Memory usage:</strong> Monitor cache size in long-running applications</li>
+          <li><strong>Error handling:</strong> Always handle network errors and edge cases</li>
         </ul>
       </div>
-
+      
       <BackButton />
+      <NextButton to="/concepts/rtk-query-advanced" label="Next: Advanced RTK Query" />
     </div>
   );
 };
+

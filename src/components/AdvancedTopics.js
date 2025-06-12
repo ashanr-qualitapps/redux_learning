@@ -8,7 +8,7 @@ import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom/server';
 import thunk from 'redux-thunk';
 import produce from 'immer';
-import { HomeButton, BackButton } from './NavigationButtons';
+import { HomeButton, BackButton, NextButton } from './NavigationButtons';
 
 // Import BFFPatternComponent correctly
 import BFFPatternComponent from './SpecializedPatterns/BFFPatternComponent';
@@ -78,6 +78,7 @@ const user2 = useSelector(state => getUserById(state, 'user2'));`}</pre>
         <li>Only using cached selectors when there's a clear performance benefit</li>
       </ul>
       <BackButton />
+      <NextButton to="/concepts/dynamic-reducers" label="Next: Dynamic Reducers" />
     </div>
   );
 };
@@ -192,6 +193,7 @@ export default withReducer('posts', postsReducer)(Posts);`}</pre>
         <li>Enables true code splitting for Redux logic</li>
       </ul>
       <BackButton />
+      <NextButton to="/concepts/redux-toolkit" label="Next: Redux Toolkit" />
     </div>
   );
 };
@@ -355,6 +357,7 @@ export const PostsList = () => {
         <li>One package instead of multiple dependencies</li>
       </ul>
       <BackButton />
+      <NextButton to="/concepts/immutable-patterns" label="Next: Immutable Update Patterns" />
     </div>
   );
 };
@@ -491,6 +494,7 @@ const complexReducerWithImmer = (state = initialState, action) => {
         <li>Consider normalized state shapes</li>
       </ul>
       <BackButton />
+      <NextButton to="/concepts/testing-redux" label="Next: Testing Redux" />
     </div>
   );
 };
@@ -703,6 +707,7 @@ describe('PostsList Component', () => {
         </ul>
       </div>
       <BackButton />
+      <NextButton to="/concepts/typescript-integration" label="Next: TypeScript Integration" />
     </div>
   );
 };
@@ -969,6 +974,7 @@ export const PostsList: React.FC = () => {
         <li>Type safety across your entire Redux flow</li>
       </ul>
       <BackButton />
+      <NextButton to="/concepts/ssr-redux" label="Next: Server-Side Rendering" />
     </div>
   );
 };
@@ -1183,6 +1189,7 @@ app.get('*', async (req, res) => {
         <li>Code splitting becomes more complicated</li>
       </ul>
       <BackButton />
+      <NextButton to="/concepts/entity-relationships" label="Next: Entity Relationships" />
     </div>
   );
 };
@@ -1396,6 +1403,7 @@ function removePostWithComments(postId) {
 }`}</pre>
       </div>
       <BackButton />
+      <NextButton to="/concepts/websockets" label="Next: Redux with WebSockets" />
     </div>
   );
 };
@@ -1704,16 +1712,13 @@ const websocketMiddleware = () => {
           };
           
           // Same message and error handlers as before
-          // ...
         };
         
         connect();
         break;
         
       // Other cases remain the same
-      // ...
     }
-    
     return next(action);
   };
 };`}</pre>
@@ -1728,7 +1733,8 @@ const websocketMiddleware = () => {
         <li>Multiplayer games</li>
         <li>IoT device monitoring dashboards</li>
       </ul>
-      <BackButton />
+      <BackButton to="/concepts/redux-observable" label="Back: Redux Observable" />
+      <NextButton to="/concepts/undo-redo-pattern" label="Next: Undo/Redo Pattern" />
     </div>
   );
 };

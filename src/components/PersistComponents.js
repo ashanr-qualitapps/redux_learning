@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
 import { getReduxPersistTopic } from '../store/reducers/tableTopicsReducer';
-import { HomeButton, BackButton } from './NavigationButtons';
+import { HomeButton, BackButton, NextButton } from './NavigationButtons';
 
 // Import dependencies for react-live scope
 import { createStore } from 'redux';
@@ -235,6 +235,7 @@ const persistConfig = {
         </p>
       </div>
       <BackButton />
+      <NextButton to="/concepts/learning-improvements" label="Next: Learning Improvements" />
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
-import { HomeButton, BackButton } from './NavigationButtons';
+import { HomeButton, BackButton, NextButton } from './NavigationButtons';
 
 // React Context vs Redux Component
 export const ContextVsReduxComponent = () => {
@@ -189,6 +189,7 @@ render(<App />);
         </ul>
       </div>
       <BackButton />
+      <NextButton to="/concepts/redux-performance" label="Next: Redux Performance" />
     </div>
   );
 };
@@ -455,6 +456,7 @@ render(() => {
         </ul>
       </div>
       <BackButton />
+      <NextButton to="/concepts/custom-redux-hooks" label="Next: Custom Redux Hooks" />
     </div>
   );
 };
@@ -724,6 +726,7 @@ render(<UserList />);
         </ul>
       </div>
       <BackButton />
+      <NextButton to="/concepts/redux-router" label="Next: Redux Router Integration" />
     </div>
   );
 };
@@ -923,6 +926,7 @@ render(<App />);
         </ul>
       </div>
       <BackButton />
+      <NextButton to="/concepts/redux-suspense" label="Next: Redux with Suspense" />
     </div>
   );
 };
@@ -1210,6 +1214,7 @@ render(
         </ul>
       </div>
       <BackButton />
+      <NextButton to="/concepts/redux-persist" label="Next: Redux Persist" />
     </div>
   );
 };

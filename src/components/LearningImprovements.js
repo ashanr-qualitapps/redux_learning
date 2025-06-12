@@ -1,7 +1,7 @@
 import React from 'react';
 import { CodeExercise, Quiz } from './InteractiveExercises';
 import { ReduxFlowDiagram } from './VisualLearningAids';
-import { HomeButton, BackButton } from './NavigationButtons';
+import { HomeButton, BackButton, NextButton } from './NavigationButtons';
 
 export const LearningImprovementsComponent = () => {
   // Scope for react-live
@@ -364,6 +364,7 @@ const store = configureStore({
         </ul>
       </div>
       <BackButton />
+      <NextButton to="/concepts/websockets" label="Next: Redux with WebSockets" />
     </div>
   );
 };

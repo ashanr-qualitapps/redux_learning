@@ -1,5 +1,2 @@
-import { BFFPatternComponent } from './BFFPatternComponent';
-
-export {
-  BFFPatternComponent
-};
+export { default as BFFPatternComponent } from './BFFPatternComponent';
+export { default as UndoRedoPatternComponent } from './UndoRedoPatternComponent';

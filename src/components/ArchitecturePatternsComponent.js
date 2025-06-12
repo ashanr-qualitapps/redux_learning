@@ -5,7 +5,7 @@ import ExpandableCode from './ExpandableCode';
 import QuizComponent from './QuizComponent';
 import SectionNavigation from './SectionNavigation';
 import ProgressIndicator from './ProgressIndicator';
-import { HomeButton, BackButton, BackToTopButton } from './NavigationButtons';
+import { HomeButton, BackButton, BackToTopButton, NextButton } from './NavigationButtons';
 
 // Redux Architecture Patterns component
 export const ReduxArchitecturePatternsComponent = () => {
@@ -615,6 +615,7 @@ case USER_EVENTS.REGISTERED:
       
       <BackButton />
       <BackToTopButton />
+      <NextButton to="/concepts/entity-relationships" label="Next: Entity Relationships" />
     </div>
   );
 };

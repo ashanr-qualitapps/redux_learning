@@ -1,7 +1,7 @@
 import React from 'react';
 import Counter from './Counter';
 import TodoList from './TodoList';
-import { HomeButton, BackButton } from './NavigationButtons';
+import { HomeButton, BackButton, NextButton } from './NavigationButtons';
 
 export const ActionsComponent = () => {
   return (
@@ -153,6 +153,7 @@ export const POSTS = {
       <p>Below is a live example of dispatching actions with our Counter component:</p>
       <Counter />
       <BackButton />
+      <NextButton to="/concepts/reducers" label="Next: Reducers" />
     </div>
   );
 };
@@ -515,6 +516,8 @@ export const { addTodo, toggleTodo, removeTodo } = todosSlice.actions;
 // Extract the reducer
 export default todosSlice.reducer;`}</pre>
       </div>
+      <BackButton />
+      <NextButton to="/concepts/store" label="Next: Store" />
     </div>
   );
 };
@@ -832,6 +835,7 @@ ReactDOM.render(
       </ul>
       
       <BackButton />
+      <NextButton to="/concepts/hooks" label="Next: React-Redux Hooks" />
     </div>
   );
 };
@@ -908,459 +912,8 @@ export const ThunksComponent = () => {
       
       <p>Live example with async actions:</p>
       <TodoList />
-      <BackButton />
-    </div>
-  );
-};
-
-export const MiddlewareComponent = () => {
-  return (
-    <div className="section">
-      <HomeButton />
-      <h2>Redux Middleware</h2>
-      <p>
-        Middleware provides a third-party extension point between dispatching an action and the moment it reaches the reducer. 
-        Middleware can be used for logging, crash reporting, talking to an asynchronous API, routing, and more.
-      </p>
-      
-      <h3>Understanding Redux Middleware</h3>
-      <p>
-        At its core, Redux middleware:
-      </p>
-      <ul>
-        <li>Intercepts actions before they reach the reducers</li>
-        <li>Can modify, delay, or cancel actions</li>
-        <li>Can dispatch new actions</li>
-        <li>Forms a pipeline that actions flow through</li>
-        <li>Enables powerful side effects while maintaining Redux's predictability</li>
-      </ul>
-
-      <div className="middleware-flow-diagram">
-        <div className="flow-box action">Action Dispatched</div>
-        <div className="flow-arrow">↓</div>
-        <div className="flow-box middleware1">Middleware 1</div>
-        <div className="flow-arrow">↓</div>
-        <div className="flow-box middleware2">Middleware 2</div>
-        <div className="flow-arrow">↓</div>
-        <div className="flow-box middleware3">Middleware 3</div>
-        <div className="flow-arrow">↓</div>
-        <div className="flow-box reducer">Reducer</div>
-        <div className="flow-arrow">↓</div>
-        <div className="flow-box state">New State</div>
-      </div>
-      
-      <div className="example-box">
-        <h3>Creating Custom Middleware</h3>
-        <pre>
-          {`// Middleware follows a specific signature with three nested functions
-const customMiddleware = store => next => action => {
-  console.log('dispatching', action);
-  const result = next(action);
-  console.log('next state', store.getState());
-  return result;
-};
-
-// Apply middleware when creating the store
-const store = createStore(
-  rootReducer,
-  applyMiddleware(customMiddleware, thunk)
-);`}
-        </pre>
-      </div>
-
-      <h3>Middleware Signature Explained</h3>
-      <p>The signature <code>store => next => action => {}</code> can be confusing at first. Let's break it down:</p>
-      <ol>
-        <li><strong>store</strong>: The Redux store instance, giving access to <code>getState()</code> and <code>dispatch()</code></li>
-        <li><strong>next</strong>: A function that passes the action to the next middleware or to the reducer</li>
-        <li><strong>action</strong>: The action object that was dispatched</li>
-      </ol>
-      <p>This curried function structure allows middleware to be composed together into a chain.</p>
-      
-      <div className="example-box">
-        <h3>Middleware Chain Execution</h3>
-        <pre>
-          {`// Understanding how middleware chains work
-// With three middleware: A, B, and C
-
-// When you dispatch an action:
-dispatch(action)
-
-// Execution flows like this:
-// 1. Middleware A receives the action
-A(store)(next)(action) {
-  // A's code before calling next
-  const resultFromB = next(action);  // Calls middleware B
-  // A's code after calling next
-  return resultFromB;
-}
-
-// 2. Middleware B receives the action
-B(store)(next)(action) {
-  // B's code before calling next
-  const resultFromC = next(action);  // Calls middleware C
-  // B's code after calling next
-  return resultFromC;
-}
-
-// 3. Middleware C receives the action
-C(store)(next)(action) {
-  // C's code before calling next
-  const resultFromReducer = next(action);  // Calls the reducer
-  // C's code after calling next
-  return resultFromReducer;
-}
-
-// 4. The reducer processes the action and returns the new state`}
-        </pre>
-      </div>
-
-      <h3>Common Middleware Patterns</h3>
-      
-      <div className="example-box">
-        <h4>1. Conditional Logic</h4>
-        <pre>
-          {`// Only process specific action types
-const filterMiddleware = store => next => action => {
-  if (action.type.startsWith('USER_')) {
-    // Do something with user-related actions
-    console.log('User action:', action);
-  }
-  // Always call next to continue the chain
-  return next(action);
-};`}
-        </pre>
-      </div>
-      
-      <div className="example-box">
-        <h4>2. Transforming Actions</h4>
-        <pre>
-          {`// Modify the action before passing it to reducers
-const timestampMiddleware = store => next => action => {
-  // Add a timestamp to every action
-  const actionWithTimestamp = {
-    ...action,
-    meta: {
-      ...action.meta,
-      timestamp: Date.now()
-    }
-  };
-  return next(actionWithTimestamp);
-};`}
-        </pre>
-      </div>
-      
-      <div className="example-box">
-        <h4>3. Async Actions</h4>
-        <pre>
-          {`// Handle promises in actions (simplified version of redux-promise)
-const promiseMiddleware = store => next => action => {
-  if (action.payload && typeof action.payload.then === 'function') {
-    // Return a promise for chaining
-    return action.payload
-      .then(result => {
-        // Dispatch a new action with the resolved value
-        return next({
-          ...action,
-          payload: result
-        });
-      })
-      .catch(error => {
-        // Dispatch an error action
-        return next({
-          ...action,
-          payload: error,
-          error: true
-        });
-      });
-  }
-  
-  // If it's not a promise, pass it on
-  return next(action);
-};`}
-        </pre>
-      </div>
-      
-      <div className="example-box">
-        <h4>4. Dispatching Multiple Actions</h4>
-        <pre>
-          {`// Middleware that handles "batch" actions
-const batchActionsMiddleware = store => next => action => {
-  if (action.type === 'BATCH_ACTIONS' && Array.isArray(action.payload)) {
-    // Dispatch each action in the batch
-    action.payload.forEach(subAction => {
-      store.dispatch(subAction);
-    });
-    return; // No need to pass the BATCH_ACTIONS to reducers
-  }
-  
-  return next(action);
-};
-
-// Usage:
-dispatch({
-  type: 'BATCH_ACTIONS',
-  payload: [
-    { type: 'INCREMENT', payload: 1 },
-    { type: 'ADD_TODO', payload: 'Learn middleware' },
-    { type: 'SET_VISIBILITY_FILTER', payload: 'active' }
-  ]
-});`}
-        </pre>
-      </div>
-      
-      <div className="example-box">
-        <h4>5. Analytics and Monitoring</h4>
-        <pre>
-          {`// Track user actions for analytics
-const analyticsMiddleware = store => next => action => {
-  // Send action data to analytics service
-  if (action.type !== 'LOCATION_CHANGE') {  // Don't track router actions
-    sendToAnalytics({
-      action: action.type,
-      data: action.payload,
-      timestamp: Date.now()
-    });
-  }
-  
-  return next(action);
-};`}
-        </pre>
-      </div>
-      
-      <h3>Advanced Middleware Techniques</h3>
-      
-      <div className="example-box">
-        <h4>1. Accessing Previous and Next State</h4>
-        <pre>
-          {`const diffMiddleware = store => next => action => {
-  const prevState = store.getState();
-  const result = next(action);
-  const nextState = store.getState();
-  
-  console.log('Action:', action.type);
-  console.log('State diff:', {
-    prev: prevState,
-    next: nextState,
-    // You would use a proper diff algorithm in real code
-  });
-  
-  return result;
-};`}
-        </pre>
-      </div>
-      
-      <div className="example-box">
-        <h4>2. Early Returns and Action Cancellation</h4>
-        <pre>
-          {`// Middleware that can cancel actions based on conditions
-const authMiddleware = store => next => action => {
-  // List of actions that require authentication
-  const protectedActions = ['DELETE_ACCOUNT', 'CHANGE_PASSWORD', 'PURCHASE'];
-  
-  if (
-    protectedActions.includes(action.type) && 
-    !store.getState().auth.isAuthenticated
-  ) {
-    console.warn('Unauthorized action attempted:', action.type);
-    // Cancel the action by not calling next()
-    // Optionally dispatch an "unauthorized" action
-    store.dispatch({ type: 'UNAUTHORIZED_ACTION', payload: action.type });
-    return;
-  }
-  
-  // Proceed with the action
-  return next(action);
-};`}
-        </pre>
-      </div>
-
-      <h3>Popular Redux Middleware</h3>
-      <table className="middleware-table">
-        <thead>
-          <tr>
-            <th>Middleware</th>
-            <th>Purpose</th>
-            <th>Key Features</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>redux-thunk</code></td>
-            <td>Handle async logic</td>
-            <td>
-              <ul>
-                <li>Dispatch functions instead of plain objects</li>
-                <li>Access <code>dispatch</code> and <code>getState</code> in action creators</li>
-                <li>Simple to use and understand</li>
-              </ul>
-            </td>
-          </tr>
-          <tr>
-            <td><code>redux-saga</code></td>
-            <td>Manage side effects using generators</td>
-            <td>
-              <ul>
-                <li>Uses ES6 generators for complex async flows</li>
-                <li>Declarative effects (easier testing)</li>
-                <li>Advanced features like race conditions, throttling, etc.</li>
-              </ul>
-            </td>
-          </tr>
-          <tr>
-            <td><code>redux-observable</code></td>
-            <td>RxJS for reactive programming</td>
-            <td>
-              <ul>
-                <li>Uses RxJS Observables</li>
-                <li>Powerful operators for complex async operations</li>
-                <li>Great for event streams like autocomplete</li>
-              </ul>
-            </td>
-          </tr>
-          <tr>
-            <td><code>redux-logger</code></td>
-            <td>Logging actions and state</td>
-            <td>
-              <ul>
-                <li>Console logs for actions and state changes</li>
-                <li>Customizable log format and colors</li>
-                <li>Collapsible groups in console</li>
-              </ul>
-            </td>
-          </tr>
-          <tr>
-            <td><code>redux-persist</code></td>
-            <td>State persistence</td>
-            <td>
-              <ul>
-                <li>Save Redux state to localStorage/AsyncStorage</li>
-                <li>Rehydrate state on app startup</li>
-                <li>Configurable storage engines and persistence</li>
-              </ul>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <h3>Middleware Order Matters</h3>
-      <p>
-        The order in which middleware is applied can significantly impact behavior. Middleware is applied from left to right:
-      </p>
-      <div className="example-box">
-        <pre>
-          {`// Order matters!
-applyMiddleware(thunk, logger)
-// vs
-applyMiddleware(logger, thunk)
-
-// In the first case, actions will be logged after thunks are processed
-// In the second case, the thunk functions themselves will be logged`}
-        </pre>
-      </div>
-      <p>Common ordering considerations:</p>
-      <ul>
-        <li>Put <code>redux-thunk</code> or <code>redux-saga</code> early in the chain</li>
-        <li>Put logging middleware at the end to see actions after other middleware have processed them</li>
-        <li>Put crash reporting middleware early to catch errors in other middleware</li>
-      </ul>
-      
-      <h3>Testing Middleware</h3>
-      <div className="example-box">
-        <pre>
-          {`// Testing middleware with Jest
-import configureMockStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
-import loggingMiddleware from './loggingMiddleware';
-
-const middlewares = [thunk, loggingMiddleware];
-const mockStore = configureMockStore(middlewares);
-
-describe('Middleware Tests', () => {
-  it('should dispatch success action after API call', async () => {
-    // Mock fetch response
-    global.fetch = jest.fn().mockResolvedValue({
-      json: jest.fn().mockResolvedValue({ data: 'test' })
-    });
-    
-    // Create mock store
-    const store = mockStore({ data: null });
-    
-    // Create async action
-    const fetchData = () => async (dispatch) => {
-      dispatch({ type: 'FETCH_REQUEST' });
-      try {
-        const response = await fetch('/api/data');
-        const json = await response.json();
-        dispatch({ type: 'FETCH_SUCCESS', payload: json.data });
-      } catch (error) {
-        dispatch({ type: 'FETCH_ERROR', payload: error.message });
-      }
-    };
-    
-    // Dispatch the action
-    await store.dispatch(fetchData());
-    
-    // Check dispatched actions
-    const actions = store.getActions();
-    expect(actions[0]).toEqual({ type: 'FETCH_REQUEST' });
-    expect(actions[1]).toEqual({ type: 'FETCH_SUCCESS', payload: 'test' });
-  });
-};`}
-        </pre>
-      </div>
-      
-      <BackButton />
-    </div>
-  );
-};
-
-export const ReduxThunkComponent = () => {
-  return (
-    <div className="section">
-      <HomeButton />
-      <h2>Redux-Thunk In Depth</h2>
-      <p>Redux Thunk middleware allows you to write action creators that return a function instead of an action object. 
-         The thunk can be used to delay the dispatch of an action, or to dispatch only if certain conditions are met.</p>
-      
-      <div className="example-box">
-        <h3>How Thunk Works:</h3>
-        <pre>
-          {`// Simplified implementation of Redux Thunk
-const thunk = ({ dispatch, getState }) => next => action => {
-  // If action is a function, call it with dispatch and getState
-  if (typeof action === 'function') {
-    return action(dispatch, getState);
-  }
-  
-  // Otherwise, pass it to the next middleware
-  return next(action);
-};`}
-        </pre>
-        
-        <h3>Advanced Thunk Usage:</h3>
-        <pre>
-          {`// Conditional dispatching
-const incrementIfOdd = () => (dispatch, getState) => {
-  const { counter } = getState();
-  if (counter.value % 2 !== 0) {
-    dispatch({ type: 'INCREMENT' });
-  }
-};
-
-// Chaining thunks
-const fetchUserAndTheirPosts = (userId) => async (dispatch) => {
-  // First thunk fetches user
-  await dispatch(fetchUser(userId));
-  // Then fetches posts
-  return dispatch(fetchPostsByUserId(userId));
-};`}
-        </pre>
-      </div>
-      
-      <p>Thunk is great for simple async operations but can become unwieldy for complex async flows.</p>
-      
-      <BackButton />
+      <BackButton to="/concepts/middleware" label="Back: Middleware Intro" />
+      <NextButton to="/concepts/redux-thunk" label="Next: Redux Thunk" />
     </div>
   );
 };
@@ -1411,7 +964,8 @@ function* todoSaga() {
         <li>Provides cancellation, throttling, and debouncing</li>
       </ul>
       
-      <BackButton />
+      <BackButton to="/concepts/redux-thunk" label="Back: Redux Thunk" />
+      <NextButton to="/concepts/redux-observable" label="Next: Redux Observable" />
     </div>
   );
 };
@@ -1421,1059 +975,528 @@ export const ReduxObservableComponent = () => {
     <div className="section">
       <HomeButton />
       <h2>Redux Observable</h2>
-      <p>Redux Observable is middleware for Redux that uses RxJS to create side effects for asynchronous actions.
-         It introduces "Epics" - functions that listen for actions and dispatch new actions in response.</p>
-      
+      <p>
+        Redux Observable is a middleware that enables complex, reactive programming
+        patterns using RxJS observables.
+      </p>
+
       <div className="example-box">
-        <h3>Epic Example:</h3>
+        <h3>Basic Epic:</h3>
         <pre>
           {`import { ofType } from 'redux-observable';
-import { ajax } from 'rxjs/ajax';
 import { mergeMap, map, catchError } from 'rxjs/operators';
+import { ajax } from 'rxjs/ajax';
 import { of } from 'rxjs';
 
 // An Epic is a function that takes a stream of actions and returns a stream of actions
-const fetchTodosEpic = action$ => action$.pipe(
-  ofType('FETCH_TODOS_REQUEST'),
-  mergeMap(() => 
-    ajax.getJSON('https://api.example.com/todos').pipe(
-      map(response => ({ 
-        type: 'FETCH_TODOS_SUCCESS', 
-        payload: response 
-      })),
-      catchError(error => of({ 
-        type: 'FETCH_TODOS_FAILURE', 
-        payload: error.message 
-      }))
+const fetchUserEpic = (action$) => action$.pipe(
+  ofType('FETCH_USER_REQUEST'),
+  mergeMap(action => 
+    ajax.getJSON(\`https://api.github.com/users/\${action.payload}\`).pipe(
+      map(response => ({ type: 'FETCH_USER_SUCCESS', payload: response })),
+      catchError(error => of({ type: 'FETCH_USER_FAILURE', payload: error.message }))
     )
   )
-);
-
-// Setup in store.js:
-// import { createEpicMiddleware, combineEpics } from 'redux-observable';
-// const epicMiddleware = createEpicMiddleware();
-// const store = createStore(rootReducer, applyMiddleware(epicMiddleware));
-// epicMiddleware.run(combineEpics(fetchTodosEpic));`}
+);`}
         </pre>
       </div>
-      
-      <p>Key features of Redux Observable:</p>
-      <ul>
-        <li>Leverages powerful RxJS operators for complex async flows</li>
-        <li>Great for handling events over time (websockets, polling)</li>
-        <li>Can easily cancel, debounce, retry operations</li>
-        <li>Good for complex operations like autocomplete search</li>
-      </ul>
-      
-      <BackButton />
+
+      <BackButton to="/concepts/redux-saga" label="Back: Redux Saga" />
+      <NextButton to="/concepts/websockets" label="Next: Redux with WebSockets" />
     </div>
   );
 };
 
-export const RTKQueryComponent = () => {
+export const WebSocketsComponent = () => {
   return (
     <div className="section">
       <HomeButton />
-      <h2>RTK Query - The Complete Guide</h2>
+      <h2>Redux with WebSockets</h2>
+      <p>Integrating WebSockets with Redux allows for real-time data updates in your application.
+         This is useful for features like live notifications, chat messages, or real-time data feeds.</p>
+      
+      <h3>Understanding WebSocket Integration</h3>
       <p>
-        RTK Query is a powerful data fetching and caching tool built on top of Redux Toolkit. 
-        It's designed to simplify common cases for loading data in a web application, 
-        eliminating the need to hand-write data fetching & caching logic yourself.
+        WebSocket integration typically involves:
       </p>
-
-      <div className="key-points">
-        <h3>Why RTK Query?</h3>
-        <p>Traditional data fetching in Redux requires a lot of boilerplate code:</p>
-        <ul>
-          <li>Loading state management (isLoading, isError, etc.)</li>
-          <li>Request deduplication</li>
-          <li>Cache management and invalidation</li>
-          <li>Background refetching</li>
-          <li>Optimistic updates</li>
-          <li>Error handling and retry logic</li>
-        </ul>
-        <p>RTK Query handles all of this automatically while providing excellent developer experience.</p>
-      </div>
-
-      <div className="concept-explanation">
-        <h3>Core Architecture</h3>
-        <p>RTK Query is built around several key concepts:</p>
-        
-        <div className="architecture-diagram">
-          <div className="arch-box api-slice">
-            <h4>API Slice</h4>
-            <p>Central definition of endpoints</p>
-          </div>
-          <div className="arch-box base-query">
-            <h4>Base Query</h4>
-            <p>Wrapper around fetch/axios</p>
-          </div>
-          <div className="arch-box endpoints">
-            <h4>Endpoints</h4>
-            <p>Queries & Mutations</p>
-          </div>
-          <div className="arch-box cache">
-            <h4>Normalized Cache</h4>
-            <p>Automatic data storage</p>
-          </div>
-          <div className="arch-box hooks">
-            <h4>Generated Hooks</h4>
-            <p>React integration</p>
-          </div>
-        </div>
-      </div>
-
-      <h3>Getting Started - Basic Setup</h3>
+      <ul>
+        <li>Establishing a WebSocket connection when the app loads</li>
+        <li>Listening for messages and dispatching actions to update the state</li>
+        <li>Handling connection open, close, and error events</li>
+        <li>Cleaning up the connection when the app unloads or the component unmounts</li>
+      </ul>
       
       <div className="example-box">
-        <h4>1. Install Dependencies</h4>
+        <h3>Basic WebSocket Setup:</h3>
         <pre>
-          {`npm install @reduxjs/toolkit react-redux
-# RTK Query is included in Redux Toolkit`}
-        </pre>
-      </div>
+          {`// websocket.js - WebSocket utility
+let socket;
 
-      <div className="example-box">
-        <h4>2. Create Your First API Slice</h4>
-        <pre>
-          {`// src/services/api.js
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-
-export const api = createApi({
-  // Unique key that defines where the cache is stored
-  reducerPath: 'api',
+export const initWebSocket = (url) => {
+  socket = new WebSocket(url);
   
-  // Base query configuration
-  baseQuery: fetchBaseQuery({
-    baseUrl: 'https://jsonplaceholder.typicode.com/',
-    
-    // Global request configuration
-    prepareHeaders: (headers, { getState }) => {
-      // Add auth token if available
-      const token = getState().auth?.token;
-      if (token) {
-        headers.set('authorization', \`Bearer \${token}\`);
-      }
-      
-      // Add content type
-      headers.set('content-type', 'application/json');
-      return headers;
-    },
-  }),
+  socket.addEventListener('open', () => {
+    console.log('WebSocket connected');
+  });
   
-  // Tag types for cache invalidation
-  tagTypes: ['Posts', 'Users', 'Comments'],
+  socket.addEventListener('message', (event) => {
+    const data = JSON.parse(event.data);
+    // Dispatch an action with the received data
+    store.dispatch({ type: 'WS_MESSAGE_RECEIVED', payload: data });
+  });
   
-  // Define endpoints
-  endpoints: (builder) => ({
-    // Query endpoints (for fetching data)
-    getPosts: builder.query({
-      query: () => 'posts',
-      providesTags: ['Posts'],
-    }),
-    
-    getPost: builder.query({
-      query: (id) => \`posts/\${id}\`,
-      providesTags: (result, error, id) => [{ type: 'Posts', id }],
-    }),
-    
-    getUsers: builder.query({
-      query: () => 'users',
-      providesTags: ['Users'],
-    }),
-    
-    // Mutation endpoints (for updating data)
-    addPost: builder.mutation({
-      query: (newPost) => ({
-        url: 'posts',
-        method: 'POST',
-        body: newPost,
-      }),
-      invalidatesTags: ['Posts'],
-    }),
-    
-    updatePost: builder.mutation({
-      query: ({ id, ...patch }) => ({
-        url: \`posts/\${id}\`,
-        method: 'PUT',
-        body: patch,
-      }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Posts', id }],
-    }),
-    
-    deletePost: builder.mutation({
-      query: (id) => ({
-        url: \`posts/\${id}\`,
-        method: 'DELETE',
-      }),
-      invalidatesTags: (result, error, id) => [{ type: 'Posts', id }],
-    }),
-  }),
-});
-
-// Export auto-generated hooks
-export const {
-  useGetPostsQuery,
-  useGetPostQuery,
-  useGetUsersQuery,
-  useAddPostMutation,
-  useUpdatePostMutation,
-  useDeletePostMutation,
-} = api;`}
-        </pre>
-      </div>
-
-      <div className="example-box">
-        <h4>3. Configure Your Store</h4>
-        <pre>
-          {`// src/store/index.js
-import { configureStore } from '@reduxjs/toolkit';
-import { setupListeners } from '@reduxjs/toolkit/query';
-import { api } from '../services/api';
-import authSlice from './authSlice';
-
-export const store = configureStore({
-  reducer: {
-    // Add the generated reducer as a specific top-level slice
-    [api.reducerPath]: api.reducer,
-    auth: authSlice,
-  },
+  socket.addEventListener('close', () => {
+    console.log('WebSocket disconnected');
+  });
   
-  // Adding the api middleware enables caching, invalidation, polling,
-  // and other useful features of RTK Query
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(api.middleware),
-});
+  socket.addEventListener('error', (error) => {
+    console.error('WebSocket error:', error);
+  });
+};
 
-// Enable refetchOnFocus/refetchOnReconnect behaviors
-setupListeners(store.dispatch);
-
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;`}
-        </pre>
-      </div>
-
-      <h3>Using RTK Query in Components</h3>
-
-      <div className="example-box">
-        <h4>Simple Data Fetching</h4>
-        <pre>
-          {`// PostsList.js
-import React from 'react';
-import { useGetPostsQuery } from '../services/api';
-
-const PostsList = () => {
-  const {
-    data: posts,
-    error,
-    isLoading,
-    isFetching,
-    isSuccess,
-    isError,
-    refetch,
-  } = useGetPostsQuery();
-
-  if (isLoading) return <div className="loading">Loading posts...</div>;
-  
-  if (isError) {
-    return (
-      <div className="error">
-        <h3>Error loading posts</h3>
-        <p>{error?.data?.message || error?.message || 'Something went wrong'}</p>
-        <button onClick={refetch}>Try Again</button>
-      </div>
-    );
+export const sendMessage = (message) => {
+  if (socket && socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify(message));
+  } else {
+    console.error('WebSocket is not open. Message not sent:', message);
   }
-
-  return (
-    <div className="posts-container">
-      <div className="posts-header">
-        <h2>All Posts ({posts?.length || 0})</h2>
-        <button 
-          onClick={refetch}
-          disabled={isFetching}
-          className={isFetching ? 'refreshing' : ''}
-        >
-          {isFetching ? 'Refreshing...' : 'Refresh'}
-        </button>
-      </div>
-      
-      <div className="posts-grid">
-        {posts?.map((post) => (
-          <div key={post.id} className="post-card">
-            <h3>{post.title}</h3>
-            <p>{post.body}</p>
-            <div className="post-meta">
-              <span>ID: {post.id}</span>
-              <span>User: {post.userId}</span>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
 };
 
-export default PostsList;`}
+export const closeWebSocket = () => {
+  if (socket) {
+    socket.close();
+  }
+};`}
         </pre>
       </div>
-
+      
       <div className="example-box">
-        <h4>Handling Mutations</h4>
+        <h3>Integrating WebSocket with Redux:</h3>
         <pre>
-          {`// AddPostForm.js
-import React, { useState } from 'react';
-import { useAddPostMutation } from '../services/api';
+          {`// store.js - Integrating WebSocket in Redux store
+import { initWebSocket, closeWebSocket } from './websocket';
 
-const AddPostForm = () => {
-  const [title, setTitle] = useState('');
-  const [body, setBody] = useState('');
-  const [userId, setUserId] = useState(1);
+const store = createStore(rootReducer, applyMiddleware(thunk));
+
+// Initialize WebSocket connection
+initWebSocket('wss://api.example.com/realtime');
+
+// Clean up WebSocket connection on store unsubscribe
+store.subscribe(() => {
+  const state = store.getState();
   
-  const [addPost, { isLoading, isSuccess, isError, error }] = useAddPostMutation();
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!title.trim() || !body.trim()) {
-      alert('Please fill in all fields');
-      return;
-    }
-
-    try {
-      const result = await addPost({
-        title: title.trim(),
-        body: body.trim(),
-        userId: Number(userId),
-      }).unwrap();
-      
-      console.log('Post created:', result);
-      
-      // Reset form
-      setTitle('');
-      setBody('');
-      setUserId(1);
-      
-      // Show success message
-      alert('Post created successfully!');
-    } catch (err) {
-      console.error('Failed to create post:', err);
-      alert('Failed to create post. Please try again.');
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="add-post-form">
-      <h2>Create New Post</h2>
-      
-      <div className="form-group">
-        <label htmlFor="title">Title:</label>
-        <input
-          id="title"
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Enter post title"
-          disabled={isLoading}
-        />
-      </div>
-      
-      <div className="form-group">
-        <label htmlFor="body">Content:</label>
-        <textarea
-          id="body"
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-          placeholder="Enter post content"
-          rows={4}
-          disabled={isLoading}
-        />
-      </div>
-      
-      <div className="form-group">
-        <label htmlFor="userId">User ID:</label>
-        <select
-          id="userId"
-          value={userId}
-          onChange={(e) => setUserId(e.target.value)}
-          disabled={isLoading}
-        >
-          {[1, 2, 3, 4, 5].map(id => (
-            <option key={id} value={id}>User {id}</option>
-          ))}
-        </select>
-      </div>
-      
-      <button 
-        type="submit" 
-        disabled={isLoading || !title.trim() || !body.trim()}
-        className="submit-btn"
-      >
-        {isLoading ? 'Creating...' : 'Create Post'}
-      </button>
-      
-      {isError && (
-        <div className="error-message">
-          Error: {error?.data?.message || 'Failed to create post'}
-        </div>
-      )}
-      
-      {isSuccess && (
-        <div className="success-message">
-          Post created successfully!
-        </div>
-      )}
-    </form>
-  );
-};
-
-export default AddPostForm;`}
-        </pre>
-      </div>
-
-      <h3>Advanced Query Techniques</h3>
-
-      <div className="example-box">
-        <h4>Conditional Queries</h4>
-        <pre>
-          {`// UserProfile.js
-import React from 'react';
-import { useGetUserQuery, useGetPostsQuery } from '../services/api';
-
-const UserProfile = ({ userId }) => {
-  // Skip the query if no userId is provided
-  const {
-    data: user,
-    isLoading: userLoading,
-    error: userError,
-  } = useGetUserQuery(userId, {
-    skip: !userId, // Don't run the query if userId is falsy
-  });
-
-  // Only fetch user's posts if we have a user
-  const {
-    data: userPosts,
-    isLoading: postsLoading,
-  } = useGetPostsQuery(undefined, {
-    skip: !user?.id,
-    selectFromResult: ({ data, ...other }) => ({
-      // Filter posts to only show this user's posts
-      data: data?.filter(post => post.userId === user?.id),
-      ...other,
-    }),
-  });
-
-  if (!userId) return <div>Please select a user</div>;
-  if (userLoading) return <div>Loading user...</div>;
-  if (userError) return <div>Error loading user</div>;
-
-  return (
-    <div className="user-profile">
-      <div className="user-info">
-        <h2>{user.name}</h2>
-        <p>Email: {user.email}</p>
-        <p>Website: {user.website}</p>
-        <p>Company: {user.company?.name}</p>
-      </div>
-      
-      <div className="user-posts">
-        <h3>Posts by {user.name}</h3>
-        {postsLoading ? (
-          <div>Loading posts...</div>
-        ) : (
-          <div className="posts-list">
-            {userPosts?.map(post => (
-              <div key={post.id} className="post-item">
-                <h4>{post.title}</h4>
-                <p>{post.body}</p>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};`}
-        </pre>
-      </div>
-
-      <div className="example-box">
-        <h4>Polling and Background Sync</h4>
-        <pre>
-          {`// LiveDashboard.js
-import React, { useState } from 'react';
-import { useGetPostsQuery } from '../services/api';
-
-const LiveDashboard = () => {
-  const [pollingInterval, setPollingInterval] = useState(0);
-  
-  const {
-    data: posts,
-    isLoading,
-    isFetching,
-    error,
-  } = useGetPostsQuery(undefined, {
-    // Poll every 5 seconds when pollingInterval > 0
-    pollingInterval: pollingInterval,
-    
-    // Refetch when user focuses window
-    refetchOnFocus: true,
-    
-    // Refetch when network reconnects
-    refetchOnReconnect: true,
-    
-    // Refetch when component mounts if data is older than 60 seconds
-    refetchOnMountOrArgChange: 60,
-  });
-
-  const togglePolling = () => {
-    setPollingInterval(current => current === 0 ? 5000 : 0);
-  };
-
-  return (
-    <div className="live-dashboard">
-      <div className="dashboard-controls">
-        <button onClick={togglePolling}>
-          {pollingInterval > 0 ? 'Stop Live Updates' : 'Start Live Updates'}
-        </button>
-        {isFetching && <span className="fetching-indicator">Updating...</span>}
-      </div>
-      
-      <div className="dashboard-content">
-        <h2>Live Posts Dashboard</h2>
-        <p>Total Posts: {posts?.length || 0}</p>
-        
-        {pollingInterval > 0 && (
-          <p className="polling-status">
-            🔄 Auto-refreshing every {pollingInterval / 1000} seconds
-          </p>
-        )}
-        
-        {error && <div className="error">Error: {error.message}</div>}
-        
-        <div className="posts-summary">
-          {posts?.slice(0, 5).map(post => (
-            <div key={post.id} className="post-summary">
-              <strong>{post.title}</strong>
-              <span> - by User {post.userId}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};`}
-        </pre>
-      </div>
-
-      <h3>Cache Management & Optimizations</h3>
-
-      <div className="example-box">
-        <h4>Manual Cache Updates</h4>
-        <pre>
-          {`// Optimistic Updates Example
-import { api } from '../services/api';
-
-// In a component
-const OptimisticPostEditor = ({ postId }) => {
-  const { data: post } = useGetPostQuery(postId);
-  const [updatePost] = useUpdatePostMutation();
-  const dispatch = useDispatch();
-
-  const handleOptimisticUpdate = async (newTitle) => {
-    // 1. Optimistically update the cache immediately
-    const patchResult = dispatch(
-      api.util.updateQueryData('getPost', postId, (draft) => {
-        draft.title = newTitle;
-      })
-    );
-
-    try {
-      // 2. Make the actual request
-      await updatePost({ id: postId, title: newTitle }).unwrap();
-    } catch {
-      // 3. If request fails, revert the optimistic update
-      patchResult.undo();
-      
-      // 4. Optionally show error message
-      alert('Failed to update post title');
-    }
-  };
-
-  return (
-    <div>
-      <h3>Current title: {post?.title}</h3>
-      <button onClick={() => handleOptimisticUpdate('New Optimistic Title')}>
-        Update Title Optimistically
-      </button>
-    </div>
-  );
-};`}
-        </pre>
-      </div>
-
-      <div className="example-box">
-        <h4>Advanced Caching Strategies</h4>
-        <pre>
-          {`// Enhanced API slice with advanced caching
-const enhancedApi = api.injectEndpoints({
-  endpoints: (builder) => ({
-    // Search with caching by search term
-    searchPosts: builder.query({
-      query: (searchTerm) => \`posts?q=\${encodeURIComponent(searchTerm)}\`,
-      
-      // Keep cached data for 5 minutes
-      keepUnusedDataFor: 300,
-      
-      // Custom cache key generation
-      serializeQueryArgs: ({ queryArgs }) => {
-        return \`search-\${queryArgs?.toLowerCase()}\`;
-      },
-      
-      // Transform and normalize the response
-      transformResponse: (response) => {
-        return {
-          results: response.map(post => ({
-            ...post,
-            searchRelevance: calculateRelevance(post, searchTerm),
-          })),
-          total: response.length,
-          searchTerm,
-        };
-      },
-    }),
-
-    // Infinite scroll pagination
-    getPostsPaginated: builder.query({
-      query: ({ page = 1, limit = 10 }) => 
-        \`posts?_page=\${page}&_limit=\${limit}\`,
-      
-      // Merge pages for infinite scroll
-      serializeQueryArgs: ({ queryArgs }) => {
-        const { limit } = queryArgs;
-        return \`posts-paginated-\${limit}\`;
-      },
-      
-      merge: (currentCache, newItems, { arg }) => {
-        if (arg.page === 1) {
-          return newItems;
-        }
-        return [...(currentCache || []), ...newItems];
-      },
-      
-      // Invalidate on a schedule or condition
-      forceRefetch({ currentArg, previousArg }) {
-        return currentArg?.page !== previousArg?.page;
-      },
-    }),
-
-    // Prefetch related data
-    getPostWithComments: builder.query({
-      query: (postId) => \`posts/\${postId}\`,
-      
-      async onQueryStarted(postId, { dispatch, queryFulfilled }) {
-        // Prefetch comments while post is loading
-        dispatch(api.endpoints.getComments.initiate(postId));
-        
-        try {
-          await queryFulfilled;
-        } catch {
-          // Handle error
-        }
-      },
-    }),
-  }),
-  overrideExisting: false,
+  if (state.app.webSocketConnected) {
+    initWebSocket(state.app.webSocketUrl);
+  } else {
+    closeWebSocket();
+  }
 });`}
         </pre>
       </div>
 
-      <h3>Real-time Integration</h3>
-
-      <div className="example-box">
-        <h4>WebSocket Integration</h4>
-        <pre>
-          {`// Real-time posts with WebSocket updates
-const realtimeApi = api.injectEndpoints({
-  endpoints: (builder) => ({
-    getRealtimePosts: builder.query({
-      query: () => 'posts',
-      providesTags: ['Posts'],
+      <h3>Handling WebSocket Events</h3>
+      <p>
+        When integrating WebSockets, you will handle various events like connection open, message received, error, and close.
+        Here's how you can handle these events in your Redux application:
+      </p>
       
-      async onCacheEntryAdded(
-        arg,
-        { updateCachedData, cacheDataLoaded, cacheEntryRemoved }
-      ) {
-        // Wait for initial data to load
-        try {
-          await cacheDataLoaded;
-          
-          // Create WebSocket connection
-          const ws = new WebSocket('wss://api.example.com/posts/live');
-          
-          ws.addEventListener('message', (event) => {
-            const data = JSON.parse(event.data);
-            
-            updateCachedData((draft) => {
-              switch (data.type) {
-                case 'POST_ADDED':
-                  draft.push(data.post);
-                  break;
-                  
-                case 'POST_UPDATED':
-                  const index = draft.findIndex(p => p.id === data.post.id);
-                  if (index !== -1) {
-                    draft[index] = { ...draft[index], ...data.post };
-                  }
-                  break;
-                  
-                case 'POST_DELETED':
-                  return draft.filter(p => p.id !== data.postId);
-                  
-                default:
-                  break;
-              }
-            });
-          });
-          
-          // Cleanup when cache entry is removed
-          await cacheEntryRemoved;
-          ws.close();
-          
-        } catch (error) {
-          console.error('WebSocket connection failed:', error);
-        }
-      },
-    }),
-  }),
+      <div className="example-box">
+        <h4>Connection Lifecycle:</h4>
+        <pre>
+          {`// actions.js - Action creators for WebSocket events
+export const wsConnect = () => ({ type: 'WS_CONNECT' });
+export const wsDisconnect = () => ({ type: 'WS_DISCONNECT' });
+export const wsMessageReceived = (message) => ({ 
+  type: 'WS_MESSAGE_RECEIVED', 
+  payload: message 
 });
 
-// Usage in component
-const RealtimePostsList = () => {
-  const { data: posts, isLoading } = useGetRealtimePostsQuery();
-  
-  return (
-    <div className="realtime-posts">
-      <h2>Live Posts Feed 🔴 LIVE</h2>
-      {isLoading ? (
-        <div>Loading...</div>
-      ) : (
-        <div className="posts-feed">
-          {posts?.map(post => (
-            <div key={post.id} className="live-post">
-              <h3>{post.title}</h3>
-              <p>{post.body}</p>
-              <small>By User {post.userId} • {post.timestamp}</small>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};`}
-        </pre>
-      </div>
-
-      <h3>Testing RTK Query</h3>
-
-      <div className="example-box">
-        <h4>Testing Components with RTK Query</h4>
-        <pre>
-          {`// PostsList.test.js
-import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
-import { api } from '../services/api';
-import PostsList from '../components/PostsList';
-
-// Mock data
-const mockPosts = [
-  { id: 1, title: 'Test Post 1', body: 'Content 1', userId: 1 },
-  { id: 2, title: 'Test Post 2', body: 'Content 2', userId: 2 },
-];
-
-// Helper to create store with preloaded state
-const createTestStore = (preloadedState = {}) => {
-  return configureStore({
-    reducer: {
-      [api.reducerPath]: api.reducer,
-    },
-    middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(api.middleware),
-    preloadedState,
-  });
+// reducer.js - Handling WebSocket actions in reducer
+const initialState = {
+  connected: false,
+  messages: [],
 };
 
-// Test with mocked successful response
-test('displays posts when API call succeeds', async () => {
-  // Create store with mocked data
-  const store = createTestStore({
-    api: {
-      queries: {
-        'getPosts(undefined)': {
-          status: 'fulfilled',
-          data: mockPosts,
-        },
-      },
-    },
-  });
-
-  render(
-    <Provider store={store}>
-      <PostsList />
-    </Provider>
-  );
-
-  // Wait for posts to appear
-  await waitFor(() => {
-    expect(screen.getByText('Test Post 1')).toBeInTheDocument();
-    expect(screen.getByText('Test Post 2')).toBeInTheDocument();
-  });
-});
-
-// Test with mocked error response
-test('displays error when API call fails', async () => {
-  const store = createTestStore({
-    api: {
-      queries: {
-        'getPosts(undefined)': {
-          status: 'rejected',
-          error: { message: 'Network Error' },
-        },
-      },
-    },
-  });
-
-  render(
-    <Provider store={store}>
-      <PostsList />
-    </Provider>
-  );
-
-  await waitFor(() => {
-    expect(screen.getByText(/Error loading posts/)).toBeInTheDocument();
-    expect(screen.getByText(/Network Error/)).toBeInTheDocument();
-  });
-});`}
-        </pre>
-      </div>
-
-      <h3>Performance Best Practices</h3>
-
-      <div className="explanation-box">
-        <h4>Optimization Techniques</h4>
-        <ul>
-          <li><strong>Selective Subscriptions:</strong> Use <code>selectFromResult</code> to subscribe to only specific parts of query results</li>
-          <li><strong>Query Splitting:</strong> Split large queries into smaller, more focused ones</li>
-          <li><strong>Prefetching:</strong> Use <code>dispatch(api.util.prefetch())</code> to load data before it's needed</li>
-          <li><strong>Cache Management:</strong> Configure appropriate <code>keepUnusedDataFor</code> values</li>
-          <li><strong>Request Deduplication:</strong> RTK Query automatically deduplicates identical requests</li>
-        </ul>
-      </div>
-
-      <div className="example-box">
-        <h4>Performance Monitoring</h4>
-        <pre>
-          {`// Custom hook for performance monitoring
-import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
-
-export const useRTKQueryStats = () => {
-  const queryState = useSelector(state => state.api.queries);
-  
-  useEffect(() => {
-    const stats = Object.values(queryState).reduce((acc, query) => {
-      acc.total++;
-      if (query.status === 'pending') acc.pending++;
-      if (query.status === 'fulfilled') acc.fulfilled++;
-      if (query.status === 'rejected') acc.rejected++;
-      return acc;
-    }, { total: 0, pending: 0, fulfilled: 0, rejected: 0 });
-    
-    console.log('RTK Query Stats:', stats);
-  }, [queryState]);
-  
-  return queryState;
-};
-
-// Performance monitoring component
-const QueryStatsMonitor = () => {
-  const stats = useRTKQueryStats();
-  
-  return (
-    <div className="query-stats">
-      <h4>Query Performance</h4>
-      <p>Active Queries: {Object.keys(stats).length}</p>
-      <p>Cache Size: {JSON.stringify(stats).length} bytes</p>
-    </div>
-  );
-};`}
-        </pre>
-      </div>
-
-      <h3>Migration Guide</h3>
-
-      <div className="explanation-box">
-        <h4>Migrating from Traditional Redux</h4>
-        <p>Here's how to gradually migrate from traditional Redux patterns to RTK Query:</p>
-        
-        <div className="migration-steps">
-          <div className="step">
-            <h5>Step 1: Identify Data Fetching Logic</h5>
-            <p>Look for thunks, sagas, or other async logic that fetches server data</p>
-          </div>
-          
-          <div className="step">
-            <h5>Step 2: Create API Slices</h5>
-            <p>Replace fetch logic with RTK Query endpoints</p>
-          </div>
-          
-          <div className="step">
-            <h5>Step 3: Update Components</h5>
-            <p>Replace useSelector + useEffect patterns with RTK Query hooks</p>
-          </div>
-          
-          <div className="step">
-            <h5>Step 4: Remove Old Code</h5>
-            <p>Clean up old reducers, actions, and async logic</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="comparison-table">
-        <h4>Before vs After Migration</h4>
-        <table>
-          <thead>
-            <tr>
-              <th>Traditional Redux</th>
-              <th>RTK Query</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <pre>{`// Actions
-const FETCH_POSTS_REQUEST = 'FETCH_POSTS_REQUEST';
-const FETCH_POSTS_SUCCESS = 'FETCH_POSTS_SUCCESS';
-const FETCH_POSTS_FAILURE = 'FETCH_POSTS_FAILURE';
-
-// Thunk
-const fetchPosts = () => async (dispatch) => {
-  dispatch({ type: FETCH_POSTS_REQUEST });
-  try {
-    const response = await fetch('/api/posts');
-    const data = await response.json();
-    dispatch({ type: FETCH_POSTS_SUCCESS, payload: data });
-  } catch (error) {
-    dispatch({ type: FETCH_POSTS_FAILURE, payload: error.message });
-  }
-};
-
-// Reducer
-const postsReducer = (state = initialState, action) => {
+function appReducer(state = initialState, action) {
   switch (action.type) {
-    case FETCH_POSTS_REQUEST:
-      return { ...state, loading: true };
-    case FETCH_POSTS_SUCCESS:
-      return { ...state, loading: false, data: action.payload };
-    case FETCH_POSTS_FAILURE:
-      return { ...state, loading: false, error: action.payload };
+    case 'WS_CONNECT':
+      return { ...state, connected: true };
+    case 'WS_DISCONNECT':
+      return { ...state, connected: false };
+    case 'WS_MESSAGE_RECEIVED':
+      return { 
+        ...state, 
+        messages: [...state.messages, action.payload] 
+      };
     default:
       return state;
   }
-};
-
-// Component
-const PostsList = () => {
-  const { data, loading, error } = useSelector(state => state.posts);
-  const dispatch = useDispatch();
-  
-  useEffect(() => {
-    dispatch(fetchPosts());
-  }, [dispatch]);
-  
-  // Rest of component...
-};`}</pre>
-              </td>
-              <td>
-                <pre>{`// API Slice
-const api = createApi({
-  reducerPath: 'api',
-  baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
-  endpoints: (builder) => ({
-    getPosts: builder.query({
-      query: () => 'posts',
-    }),
-  }),
-});
-
-// Component  
-const PostsList = () => {
-  const { data, isLoading, error } = useGetPostsQuery();
-  
-  // Rest of component...
-};`}</pre>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+}`}
+        </pre>
       </div>
 
-      <h3>Common Patterns & Recipes</h3>
-
       <div className="example-box">
-        <h4>Authentication Integration</h4>
+        <h4>Sending Messages:</h4>
         <pre>
-          {`// Auth-aware API configuration
-const baseQueryWithAuth = fetchBaseQuery({
-  baseUrl: '/api',
-  prepareHeaders: (headers, { getState }) => {
-    const token = getState().auth.token;
-    if (token) {
-      headers.set('authorization', \`Bearer \${token}\`);
-    }
-    return headers;
-  },
-});
+          {`// Component.js - Sending messages via WebSocket
+import { sendMessage } from '../websocket';
 
-const baseQueryWithReauth = async (args, api, extraOptions) => {
-  let result = await baseQueryWithAuth(args, api, extraOptions);
+const MyComponent = () => {
+  const handleSendMessage = () => {
+    const message = { type: 'NEW_MESSAGE', content: 'Hello, world!' };
+    sendMessage(message);
+  };
   
-  if (result.error && result.error.status === 401) {
-    // Try to refresh token
-    const refreshResult = await baseQueryWithAuth(
-      '/auth/refresh', 
-      api, 
-      extraOptions
-    );
-    
-    if (refreshResult.data) {
-      api.dispatch(tokenReceived(refreshResult.data));
-      // Retry the original query
-      result = await baseQueryWithAuth(args, api, extraOptions);
-    } else {
-      api.dispatch(loggedOut());
-    }
-  }
+  return (
+    <button onClick={handleSendMessage}>
+      Send Message
+    </button>
+  );
+};`}
+        </pre>
+      </div>
+
+      <h3>Best Practices for WebSocket Integration</h3>
+      <ul>
+        <li><strong>Use a dedicated WebSocket middleware</strong> to handle connections and messages</li>
+        <li><strong>Keep WebSocket logic separate</strong> from your Redux reducers and actions</li>
+        <li><strong>Handle reconnections and errors</strong> gracefully</li>
+        <li><strong>Clean up resources</strong> when components unmount or store is destroyed</li>
+        <li><strong>Test WebSocket interactions</strong> using mock servers or integration tests</li>
+      </ul>
+      
+      <BackButton to="/concepts/redux-observable" label="Back: Redux Observable" />
+    </div>
+  );
+};
+
+export const MiddlewareComponent = () => {
+  return (
+    <div className="section">
+      <HomeButton />
+      <h2>Redux Middleware</h2>
+      <p>
+        Middleware provides a way to interact with actions that have been dispatched to the store
+        before they reach the reducers. They are used for logging, crash reporting, routing, async operations, and more.
+      </p>
+      
+      <h3>Middleware Concept</h3>
+      <p>
+        Middleware forms a pipeline around your store's dispatch method, allowing you to take actions,
+        then either pass them along, transform them, delay them, or even completely replace them before they reach your reducers.
+      </p>
+      
+      <div className="example-box">
+        <h4>Basic Middleware Structure:</h4>
+        <pre>
+          {`const myMiddleware = store => next => action => {
+  // Do something before the action reaches reducers
+  console.log('Dispatching:', action);
   
+  // Call the next dispatch method in the middleware chain
+  const result = next(action);
+  
+  // Do something after the action has been processed by reducers
+  console.log('New State:', store.getState());
+  
+  // Return the result
   return result;
 };`}
         </pre>
       </div>
-
-      <div className="warning-box">
-        <h4>Common Gotchas</h4>
-        <ul>
-          <li><strong>Don't overuse RTK Query:</strong> It's designed for server state, not client state</li>
-          <li><strong>Cache key serialization:</strong> Be careful with object arguments that might not serialize consistently</li>
-          <li><strong>Tag invalidation:</strong> Make sure your tag strategies don't cause unnecessary refetches</li>
-          <li><strong>Memory usage:</strong> Monitor cache size in long-running applications</li>
-          <li><strong>Error handling:</strong> Always handle network errors and edge cases</li>
-        </ul>
+      
+      <h3>Common Types of Middleware</h3>
+      <ul>
+        <li><strong>Logging:</strong> Log actions and state for debugging</li>
+        <li><strong>Async:</strong> Handle asynchronous operations (e.g. API calls)</li>
+        <li><strong>Routing:</strong> Integrate with routing libraries</li>
+        <li><strong>Analytics:</strong> Track user actions for analytics</li>
+        <li><strong>Error reporting:</strong> Catch and report errors</li>
+      </ul>
+      
+      <div className="example-box">
+        <h4>Simple Logger Middleware:</h4>
+        <pre>
+          {`const logger = store => next => action => {
+  console.group(action.type);
+  console.info('dispatching', action);
+  const result = next(action);
+  console.log('next state', store.getState());
+  console.groupEnd();
+  return result;
+};`}
+        </pre>
       </div>
+      
+      <div className="example-box">
+        <h4>Adding Middleware to Your Store:</h4>
+        <pre>
+          {`import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import logger from 'redux-logger';
+import rootReducer from './reducers';
 
+const store = createStore(
+  rootReducer,
+  applyMiddleware(thunk, logger)
+);`}
+        </pre>
+      </div>
+      
+      <h3>Popular Middleware Libraries</h3>
+      <ul>
+        <li><strong>Redux Thunk:</strong> Handle async actions</li>
+        <li><strong>Redux Saga:</strong> Manage side effects using generator functions</li>
+        <li><strong>Redux Observable:</strong> Use RxJS to handle complex async flows</li>
+        <li><strong>Redux Logger:</strong> Log actions and state changes</li>
+      </ul>
+      
       <BackButton />
+      <NextButton to="/concepts/thunks" label="Next: Async with Thunks" />
+    </div>
+  );
+};
+
+export const ReduxThunkComponent = () => {
+  return (
+    <div className="section">
+      <HomeButton />
+      <h2>Redux Thunk In-Depth</h2>
+      <p>
+        Redux Thunk is middleware that allows you to write action creators that return a function instead of an action.
+        This is particularly useful for handling asynchronous logic like API calls.
+      </p>
+      
+      <h3>How Redux Thunk Works</h3>
+      <p>
+        Redux Thunk intercepts actions that are functions and:
+      </p>
+      <ol>
+        <li>Stops the function from reaching the reducer</li>
+        <li>Calls the function with <code>dispatch</code> and <code>getState</code> as arguments</li>
+        <li>Lets you dispatch real actions from inside that function when you're ready</li>
+      </ol>
+      
+      <div className="example-box">
+        <h4>The Thunk Middleware (Simplified Implementation):</h4>
+        <pre>
+          {`// This is a simplified version of how Redux Thunk works
+const thunk = store => next => action => {
+  // If the action is a function, call it with dispatch and getState
+  if (typeof action === 'function') {
+    return action(store.dispatch, store.getState);
+  }
+
+  // Otherwise, just pass the action along to the next middleware
+  return next(action);
+};`}
+        </pre>
+      </div>
+      
+      <h3>Common Thunk Patterns</h3>
+      
+      <div className="example-box">
+        <h4>Basic API Call:</h4>
+        <pre>
+          {`// Action Types
+const FETCH_USERS_REQUEST = 'FETCH_USERS_REQUEST';
+const FETCH_USERS_SUCCESS = 'FETCH_USERS_SUCCESS';
+const FETCH_USERS_FAILURE = 'FETCH_USERS_FAILURE';
+
+// Regular action creators
+const fetchUsersRequest = () => ({ type: FETCH_USERS_REQUEST });
+const fetchUsersSuccess = users => ({ type: FETCH_USERS_SUCCESS, payload: users });
+const fetchUsersFailure = error => ({ type: FETCH_USERS_FAILURE, payload: error });
+
+// Thunk action creator
+const fetchUsers = () => {
+  return async (dispatch, getState) => {
+    dispatch(fetchUsersRequest()); // Signal request start
+    
+    try {
+      const response = await fetch('https://api.example.com/users');
+      const users = await response.json();
+      dispatch(fetchUsersSuccess(users)); // On success
+    } catch (error) {
+      dispatch(fetchUsersFailure(error.message)); // On failure
+    }
+  };
+};
+
+// Usage in a component
+dispatch(fetchUsers());`}
+        </pre>
+      </div>
+      
+      <div className="example-box">
+        <h4>Sequential API Calls:</h4>
+        <pre>
+          {`const fetchUserData = (userId) => {
+  return async (dispatch) => {
+    dispatch({ type: 'FETCH_USER_REQUEST', payload: userId });
+    
+    try {
+      // First API call
+      const userResponse = await fetch(\`/api/users/\${userId}\`);
+      const userData = await userResponse.json();
+      dispatch({ type: 'FETCH_USER_SUCCESS', payload: userData });
+      
+      // Second API call using data from first one
+      const postsResponse = await fetch(\`/api/users/\${userId}/posts\`);
+      const posts = await postsResponse.json();
+      dispatch({ type: 'FETCH_USER_POSTS_SUCCESS', payload: posts });
+    } catch (error) {
+      dispatch({ type: 'FETCH_USER_FAILURE', payload: error.message });
+    }
+  };
+};`}
+        </pre>
+      </div>
+      
+      <div className="example-box">
+        <h4>Conditional Dispatching:</h4>
+        <pre>
+          {`const fetchUserIfNeeded = (userId) => {
+  return (dispatch, getState) => {
+    // Check if we need to fetch
+    const { users, loading } = getState();
+    
+    // Don't fetch if already loaded or loading
+    if (loading.users || users[userId]) {
+      return Promise.resolve();
+    }
+    
+    return dispatch(fetchUser(userId));
+  };
+};`}
+        </pre>
+      </div>
+      
+      <h3>Advanced Thunk Techniques</h3>
+      
+      <div className="example-box">
+        <h4>Thunks That Return Values:</h4>
+        <pre>
+          {`const createUser = (userData) => {
+  return async (dispatch) => {
+    dispatch({ type: 'CREATE_USER_REQUEST' });
+    
+    try {
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData)
+      });
+      
+      const newUser = await response.json();
+      dispatch({ type: 'CREATE_USER_SUCCESS', payload: newUser });
+      
+      // Return a value from the thunk
+      return newUser;
+    } catch (error) {
+      dispatch({ type: 'CREATE_USER_FAILURE', payload: error.message });
+      throw error; // Re-throw to let the component handle it
+    }
+  };
+};
+
+// In a component
+dispatch(createUser(userData))
+  .then(newUser => {
+    // Do something with the created user
+    console.log('User created:', newUser);
+    navigate(\`/users/\${newUser.id}\`);
+  })
+  .catch(error => {
+    // Handle errors
+    showErrorNotification(error.message);
+  });`}
+        </pre>
+      </div>
+      
+      <div className="example-box">
+        <h4>Accessing State in Thunks:</h4>
+        <pre>
+          {`const fetchRelatedItems = (itemId) => {
+  return (dispatch, getState) => {
+    const state = getState();
+    const item = state.items.find(i => i.id === itemId);
+    
+    if (!item) {
+      dispatch({ type: 'ITEM_NOT_FOUND', payload: itemId });
+      return Promise.resolve();
+    }
+    
+    // Use data from state to customize API call
+    return fetch(\`/api/related?category=\${item.category}&tags=\${item.tags.join(',')}\`)
+      .then(response => response.json())
+      .then(relatedItems => {
+        dispatch({ type: 'FETCH_RELATED_ITEMS_SUCCESS', payload: relatedItems });
+      })
+      .catch(error => {
+        dispatch({ type: 'FETCH_RELATED_ITEMS_FAILURE', payload: error.message });
+      });
+  };
+};`}
+        </pre>
+      </div>
+      
+      <h3>Testing Thunks</h3>
+      <p>
+        Since thunks are just functions, they are relatively easy to test:
+      </p>
+      
+      <div className="example-box">
+        <h4>Testing with Jest and Redux Mock Store:</h4>
+        <pre>
+          {`import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+import fetchMock from 'fetch-mock';
+import { fetchUsers } from './userActions';
+
+const middlewares = [thunk];
+const mockStore = configureMockStore(middlewares);
+
+describe('User actions', () => {
+  afterEach(() => {
+    fetchMock.restore();
+  });
+
+  it('creates FETCH_USERS_SUCCESS when fetching users is done', () => {
+    const mockUsers = [{ id: 1, name: 'John' }];
+    
+    fetchMock.getOnce('/api/users', {
+      body: mockUsers,
+      headers: { 'content-type': 'application/json' }
+    });
+
+    const expectedActions = [
+      { type: 'FETCH_USERS_REQUEST' },
+      { type: 'FETCH_USERS_SUCCESS', payload: mockUsers }
+    ];
+    
+    const store = mockStore({ users: [] });
+
+    return store.dispatch(fetchUsers()).then(() => {
+      expect(store.getActions()).toEqual(expectedActions);
+    });
+  });
+});`}
+        </pre>
+      </div>
+      
+      <h3>Alternatives to Redux Thunk</h3>
+      <p>
+        While Redux Thunk is simple and powerful, there are other middleware options for managing async flows:
+      </p>
+      <ul>
+        <li><strong>Redux Saga:</strong> Uses generator functions for complex async flows</li>
+        <li><strong>Redux Observable:</strong> Uses RxJS for reactive programming patterns</li>
+        <li><strong>Redux Toolkit's createAsyncThunk:</strong> A modern approach that simplifies thunks</li>
+      </ul>
+      
+      <BackButton to="/concepts/thunks" label="Back: Basic Thunks" />
+      <NextButton to="/concepts/redux-saga" label="Next: Redux Saga" />
     </div>
   );
 };
