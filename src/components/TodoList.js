@@ -24,32 +24,36 @@ const TodoList = () => {
     <div className="section">
       <h2>Todo List Example</h2>
       
-      <div>
+      <div className="todo-input-container">
         <input
           type="text"
           value={newTodo}
           onChange={(e) => setNewTodo(e.target.value)}
           onKeyPress={handleKeyPress}
           placeholder="Add a new todo"
+          className="todo-input"
         />
-        <button onClick={handleAddTodo}>Add Todo</button>
+        <button onClick={handleAddTodo} className="add-todo-button">Add Todo</button>
       </div>
       
-      <div style={{ marginTop: '1rem' }}>
+      <div className="todo-list-container" style={{ marginTop: '1rem' }}>
         {todos.length === 0 ? (
-          <p>No todos yet! Add some above.</p>
+          <p className="no-todos-message">No todos yet! Add some above.</p>
         ) : (
-          <ul>
+          <ul className="todo-list">
             {todos.map(todo => (
               <li key={todo.id} className="todo-item">
                 <span
                   className={todo.completed ? 'completed' : ''}
                   onClick={() => dispatch(toggleTodo(todo.id))}
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: 'pointer', flex: 1 }}
                 >
                   {todo.text}
                 </span>
-                <button onClick={() => dispatch(removeTodo(todo.id))}>
+                <button 
+                  onClick={() => dispatch(removeTodo(todo.id))}
+                  className="delete-todo-button"
+                >
                   Delete
                 </button>
               </li>

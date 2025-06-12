@@ -43,8 +43,11 @@ export const removeTodo = (id) => ({
 // Async action example using thunk
 export const incrementAsync = (amount = 1) => {
   return (dispatch) => {
+    // Validate the amount parameter
+    const validAmount = Number.isInteger(amount) && amount > 0 ? amount : 1;
+    
     setTimeout(() => {
-      dispatch(increment(amount));
+      dispatch(increment(validAmount));
     }, 1000);
   };
 };

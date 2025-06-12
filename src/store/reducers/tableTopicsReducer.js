@@ -61,7 +61,8 @@ const initialState = {
     }
   ],
   loading: false,
-  error: null
+  error: null,
+  selectedTopic: null
 };
 
 // Action types
@@ -72,8 +73,13 @@ export const ADD_TOPIC = 'ADD_TOPIC';
 export const REMOVE_TOPIC = 'REMOVE_TOPIC';
 
 // Reducer
-const tableTopicsReducer = (state = initialState, action) => {
+export const tableTopicsReducer = (state = initialState, action) => {
   switch (action.type) {
+    case 'SELECT_TOPIC':
+      return {
+        ...state,
+        selectedTopic: action.payload
+      };
     case FETCH_TOPICS_REQUEST:
       return {
         ...state,
@@ -91,16 +97,6 @@ const tableTopicsReducer = (state = initialState, action) => {
         ...state,
         loading: false,
         error: action.payload
-      };
-    case ADD_TOPIC:
-      return {
-        ...state,
-        topics: [...state.topics, action.payload]
-      };
-    case REMOVE_TOPIC:
-      return {
-        ...state,
-        topics: state.topics.filter(topic => topic.id !== action.payload)
       };
     default:
       return state;

@@ -11,6 +11,8 @@ import { HomeButton, BackButton } from './NavigationButtons';
 
 // Import BFFPatternComponent correctly
 import BFFPatternComponent from './SpecializedPatterns/BFFPatternComponent';
+// Import the new UndoRedoPatternComponent 
+import UndoRedoPatternComponent from './SpecializedPatterns/UndoRedoPatternComponent';
 
 // 1. Advanced: Caching with re-reselect
 const ReReselectComponent = () => {
@@ -1740,5 +1742,6 @@ export {
   SSRReduxComponent,
   EntityRelationshipsComponent,
   WebSocketsComponent,
-  BFFPatternComponent
+  BFFPatternComponent,
+  UndoRedoPatternComponent
 };

@@ -29,8 +29,7 @@ export const fetchTodos = () => {
     dispatch({ type: FETCH_TODOS_REQUEST });
     
     try {
-      // Example API call
-      const response = await fetch('https://jsonplaceholder.typicode.com/todos?_limit=5');
+      const response = await fetch('https://jsonplaceholder.typicode.com/todos');
       const data = await response.json();
       
       dispatch({

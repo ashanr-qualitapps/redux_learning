@@ -44,6 +44,7 @@ const menuItems = [
     items: [
       { to: '/concepts/bff-pattern', icon: '🔌', text: 'Backend-for-Frontend' },
       // Add more specialized patterns here as they are created
+      { to: '/concepts/undo-redo-pattern', icon: '⏱️', text: 'Undo/Redo Pattern' },
     ]
   },
   {
