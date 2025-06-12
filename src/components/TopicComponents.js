@@ -1474,563 +1474,1005 @@ export const RTKQueryComponent = () => {
   return (
     <div className="section">
       <HomeButton />
-      <h2>RTK Query</h2>
+      <h2>RTK Query - The Complete Guide</h2>
       <p>
-        RTK Query is a powerful data fetching and caching tool included in Redux Toolkit. It eliminates
-        the need to write data fetching logic, loading states, and cache management manually.
+        RTK Query is a powerful data fetching and caching tool built on top of Redux Toolkit. 
+        It's designed to simplify common cases for loading data in a web application, 
+        eliminating the need to hand-write data fetching & caching logic yourself.
       </p>
 
+      <div className="key-points">
+        <h3>Why RTK Query?</h3>
+        <p>Traditional data fetching in Redux requires a lot of boilerplate code:</p>
+        <ul>
+          <li>Loading state management (isLoading, isError, etc.)</li>
+          <li>Request deduplication</li>
+          <li>Cache management and invalidation</li>
+          <li>Background refetching</li>
+          <li>Optimistic updates</li>
+          <li>Error handling and retry logic</li>
+        </ul>
+        <p>RTK Query handles all of this automatically while providing excellent developer experience.</p>
+      </div>
+
+      <div className="concept-explanation">
+        <h3>Core Architecture</h3>
+        <p>RTK Query is built around several key concepts:</p>
+        
+        <div className="architecture-diagram">
+          <div className="arch-box api-slice">
+            <h4>API Slice</h4>
+            <p>Central definition of endpoints</p>
+          </div>
+          <div className="arch-box base-query">
+            <h4>Base Query</h4>
+            <p>Wrapper around fetch/axios</p>
+          </div>
+          <div className="arch-box endpoints">
+            <h4>Endpoints</h4>
+            <p>Queries & Mutations</p>
+          </div>
+          <div className="arch-box cache">
+            <h4>Normalized Cache</h4>
+            <p>Automatic data storage</p>
+          </div>
+          <div className="arch-box hooks">
+            <h4>Generated Hooks</h4>
+            <p>React integration</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>Getting Started - Basic Setup</h3>
+      
       <div className="example-box">
-        <h3>Setting Up RTK Query</h3>
+        <h4>1. Install Dependencies</h4>
         <pre>
-          {`// api.js
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-
-// Define a service using a base URL and expected endpoints
-export const pokemonApi = createApi({
-  reducerPath: 'pokemonApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://pokeapi.co/api/v2/' }),
-  endpoints: (builder) => ({
-    getPokemonByName: builder.query({
-      query: (name) => \`pokemon/\${name}\`
-    }),
-    getPokemonList: builder.query({
-      query: (limit = 10) => \`pokemon?limit=\${limit}\`
-    })
-  })
-});
-
-// Export hooks for usage in components
-export const { useGetPokemonByNameQuery, useGetPokemonListQuery } = pokemonApi;`}
+          {`npm install @reduxjs/toolkit react-redux
+# RTK Query is included in Redux Toolkit`}
         </pre>
       </div>
 
       <div className="example-box">
-        <h3>Using RTK Query in Components</h3>
+        <h4>2. Create Your First API Slice</h4>
         <pre>
-          {`import React from 'react';
-import { useGetPokemonByNameQuery } from './api';
+          {`// src/services/api.js
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-export function Pokemon({ name }) {
-  // Automatically fetches data and handles loading, caching, and errors
-  const { data, error, isLoading, refetch } = useGetPokemonByNameQuery(name);
+export const api = createApi({
+  // Unique key that defines where the cache is stored
+  reducerPath: 'api',
+  
+  // Base query configuration
+  baseQuery: fetchBaseQuery({
+    baseUrl: 'https://jsonplaceholder.typicode.com/',
+    
+    // Global request configuration
+    prepareHeaders: (headers, { getState }) => {
+      // Add auth token if available
+      const token = getState().auth?.token;
+      if (token) {
+        headers.set('authorization', \`Bearer \${token}\`);
+      }
+      
+      // Add content type
+      headers.set('content-type', 'application/json');
+      return headers;
+    },
+  }),
+  
+  // Tag types for cache invalidation
+  tagTypes: ['Posts', 'Users', 'Comments'],
+  
+  // Define endpoints
+  endpoints: (builder) => ({
+    // Query endpoints (for fetching data)
+    getPosts: builder.query({
+      query: () => 'posts',
+      providesTags: ['Posts'],
+    }),
+    
+    getPost: builder.query({
+      query: (id) => \`posts/\${id}\`,
+      providesTags: (result, error, id) => [{ type: 'Posts', id }],
+    }),
+    
+    getUsers: builder.query({
+      query: () => 'users',
+      providesTags: ['Users'],
+    }),
+    
+    // Mutation endpoints (for updating data)
+    addPost: builder.mutation({
+      query: (newPost) => ({
+        url: 'posts',
+        method: 'POST',
+        body: newPost,
+      }),
+      invalidatesTags: ['Posts'],
+    }),
+    
+    updatePost: builder.mutation({
+      query: ({ id, ...patch }) => ({
+        url: \`posts/\${id}\`,
+        method: 'PUT',
+        body: patch,
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: 'Posts', id }],
+    }),
+    
+    deletePost: builder.mutation({
+      query: (id) => ({
+        url: \`posts/\${id}\`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (result, error, id) => [{ type: 'Posts', id }],
+    }),
+  }),
+});
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+// Export auto-generated hooks
+export const {
+  useGetPostsQuery,
+  useGetPostQuery,
+  useGetUsersQuery,
+  useAddPostMutation,
+  useUpdatePostMutation,
+  useDeletePostMutation,
+} = api;`}
+        </pre>
+      </div>
+
+      <div className="example-box">
+        <h4>3. Configure Your Store</h4>
+        <pre>
+          {`// src/store/index.js
+import { configureStore } from '@reduxjs/toolkit';
+import { setupListeners } from '@reduxjs/toolkit/query';
+import { api } from '../services/api';
+import authSlice from './authSlice';
+
+export const store = configureStore({
+  reducer: {
+    // Add the generated reducer as a specific top-level slice
+    [api.reducerPath]: api.reducer,
+    auth: authSlice,
+  },
+  
+  // Adding the api middleware enables caching, invalidation, polling,
+  // and other useful features of RTK Query
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(api.middleware),
+});
+
+// Enable refetchOnFocus/refetchOnReconnect behaviors
+setupListeners(store.dispatch);
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;`}
+        </pre>
+      </div>
+
+      <h3>Using RTK Query in Components</h3>
+
+      <div className="example-box">
+        <h4>Simple Data Fetching</h4>
+        <pre>
+          {`// PostsList.js
+import React from 'react';
+import { useGetPostsQuery } from '../services/api';
+
+const PostsList = () => {
+  const {
+    data: posts,
+    error,
+    isLoading,
+    isFetching,
+    isSuccess,
+    isError,
+    refetch,
+  } = useGetPostsQuery();
+
+  if (isLoading) return <div className="loading">Loading posts...</div>;
+  
+  if (isError) {
+    return (
+      <div className="error">
+        <h3>Error loading posts</h3>
+        <p>{error?.data?.message || error?.message || 'Something went wrong'}</p>
+        <button onClick={refetch}>Try Again</button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="posts-container">
+      <div className="posts-header">
+        <h2>All Posts ({posts?.length || 0})</h2>
+        <button 
+          onClick={refetch}
+          disabled={isFetching}
+          className={isFetching ? 'refreshing' : ''}
+        >
+          {isFetching ? 'Refreshing...' : 'Refresh'}
+        </button>
+      </div>
+      
+      <div className="posts-grid">
+        {posts?.map((post) => (
+          <div key={post.id} className="post-card">
+            <h3>{post.title}</h3>
+            <p>{post.body}</p>
+            <div className="post-meta">
+              <span>ID: {post.id}</span>
+              <span>User: {post.userId}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default PostsList;`}
+        </pre>
+      </div>
+
+      <div className="example-box">
+        <h4>Handling Mutations</h4>
+        <pre>
+          {`// AddPostForm.js
+import React, { useState } from 'react';
+import { useAddPostMutation } from '../services/api';
+
+const AddPostForm = () => {
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const [userId, setUserId] = useState(1);
+  
+  const [addPost, { isLoading, isSuccess, isError, error }] = useAddPostMutation();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!title.trim() || !body.trim()) {
+      alert('Please fill in all fields');
+      return;
+    }
+
+    try {
+      const result = await addPost({
+        title: title.trim(),
+        body: body.trim(),
+        userId: Number(userId),
+      }).unwrap();
+      
+      console.log('Post created:', result);
+      
+      // Reset form
+      setTitle('');
+      setBody('');
+      setUserId(1);
+      
+      // Show success message
+      alert('Post created successfully!');
+    } catch (err) {
+      console.error('Failed to create post:', err);
+      alert('Failed to create post. Please try again.');
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="add-post-form">
+      <h2>Create New Post</h2>
+      
+      <div className="form-group">
+        <label htmlFor="title">Title:</label>
+        <input
+          id="title"
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Enter post title"
+          disabled={isLoading}
+        />
+      </div>
+      
+      <div className="form-group">
+        <label htmlFor="body">Content:</label>
+        <textarea
+          id="body"
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          placeholder="Enter post content"
+          rows={4}
+          disabled={isLoading}
+        />
+      </div>
+      
+      <div className="form-group">
+        <label htmlFor="userId">User ID:</label>
+        <select
+          id="userId"
+          value={userId}
+          onChange={(e) => setUserId(e.target.value)}
+          disabled={isLoading}
+        >
+          {[1, 2, 3, 4, 5].map(id => (
+            <option key={id} value={id}>User {id}</option>
+          ))}
+        </select>
+      </div>
+      
+      <button 
+        type="submit" 
+        disabled={isLoading || !title.trim() || !body.trim()}
+        className="submit-btn"
+      >
+        {isLoading ? 'Creating...' : 'Create Post'}
+      </button>
+      
+      {isError && (
+        <div className="error-message">
+          Error: {error?.data?.message || 'Failed to create post'}
+        </div>
+      )}
+      
+      {isSuccess && (
+        <div className="success-message">
+          Post created successfully!
+        </div>
+      )}
+    </form>
+  );
+};
+
+export default AddPostForm;`}
+        </pre>
+      </div>
+
+      <h3>Advanced Query Techniques</h3>
+
+      <div className="example-box">
+        <h4>Conditional Queries</h4>
+        <pre>
+          {`// UserProfile.js
+import React from 'react';
+import { useGetUserQuery, useGetPostsQuery } from '../services/api';
+
+const UserProfile = ({ userId }) => {
+  // Skip the query if no userId is provided
+  const {
+    data: user,
+    isLoading: userLoading,
+    error: userError,
+  } = useGetUserQuery(userId, {
+    skip: !userId, // Don't run the query if userId is falsy
+  });
+
+  // Only fetch user's posts if we have a user
+  const {
+    data: userPosts,
+    isLoading: postsLoading,
+  } = useGetPostsQuery(undefined, {
+    skip: !user?.id,
+    selectFromResult: ({ data, ...other }) => ({
+      // Filter posts to only show this user's posts
+      data: data?.filter(post => post.userId === user?.id),
+      ...other,
+    }),
+  });
+
+  if (!userId) return <div>Please select a user</div>;
+  if (userLoading) return <div>Loading user...</div>;
+  if (userError) return <div>Error loading user</div>;
+
+  return (
+    <div className="user-profile">
+      <div className="user-info">
+        <h2>{user.name}</h2>
+        <p>Email: {user.email}</p>
+        <p>Website: {user.website}</p>
+        <p>Company: {user.company?.name}</p>
+      </div>
+      
+      <div className="user-posts">
+        <h3>Posts by {user.name}</h3>
+        {postsLoading ? (
+          <div>Loading posts...</div>
+        ) : (
+          <div className="posts-list">
+            {userPosts?.map(post => (
+              <div key={post.id} className="post-item">
+                <h4>{post.title}</h4>
+                <p>{post.body}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};`}
+        </pre>
+      </div>
+
+      <div className="example-box">
+        <h4>Polling and Background Sync</h4>
+        <pre>
+          {`// LiveDashboard.js
+import React, { useState } from 'react';
+import { useGetPostsQuery } from '../services/api';
+
+const LiveDashboard = () => {
+  const [pollingInterval, setPollingInterval] = useState(0);
+  
+  const {
+    data: posts,
+    isLoading,
+    isFetching,
+    error,
+  } = useGetPostsQuery(undefined, {
+    // Poll every 5 seconds when pollingInterval > 0
+    pollingInterval: pollingInterval,
+    
+    // Refetch when user focuses window
+    refetchOnFocus: true,
+    
+    // Refetch when network reconnects
+    refetchOnReconnect: true,
+    
+    // Refetch when component mounts if data is older than 60 seconds
+    refetchOnMountOrArgChange: 60,
+  });
+
+  const togglePolling = () => {
+    setPollingInterval(current => current === 0 ? 5000 : 0);
+  };
+
+  return (
+    <div className="live-dashboard">
+      <div className="dashboard-controls">
+        <button onClick={togglePolling}>
+          {pollingInterval > 0 ? 'Stop Live Updates' : 'Start Live Updates'}
+        </button>
+        {isFetching && <span className="fetching-indicator">Updating...</span>}
+      </div>
+      
+      <div className="dashboard-content">
+        <h2>Live Posts Dashboard</h2>
+        <p>Total Posts: {posts?.length || 0}</p>
+        
+        {pollingInterval > 0 && (
+          <p className="polling-status">
+            🔄 Auto-refreshing every {pollingInterval / 1000} seconds
+          </p>
+        )}
+        
+        {error && <div className="error">Error: {error.message}</div>}
+        
+        <div className="posts-summary">
+          {posts?.slice(0, 5).map(post => (
+            <div key={post.id} className="post-summary">
+              <strong>{post.title}</strong>
+              <span> - by User {post.userId}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};`}
+        </pre>
+      </div>
+
+      <h3>Cache Management & Optimizations</h3>
+
+      <div className="example-box">
+        <h4>Manual Cache Updates</h4>
+        <pre>
+          {`// Optimistic Updates Example
+import { api } from '../services/api';
+
+// In a component
+const OptimisticPostEditor = ({ postId }) => {
+  const { data: post } = useGetPostQuery(postId);
+  const [updatePost] = useUpdatePostMutation();
+  const dispatch = useDispatch();
+
+  const handleOptimisticUpdate = async (newTitle) => {
+    // 1. Optimistically update the cache immediately
+    const patchResult = dispatch(
+      api.util.updateQueryData('getPost', postId, (draft) => {
+        draft.title = newTitle;
+      })
+    );
+
+    try {
+      // 2. Make the actual request
+      await updatePost({ id: postId, title: newTitle }).unwrap();
+    } catch {
+      // 3. If request fails, revert the optimistic update
+      patchResult.undo();
+      
+      // 4. Optionally show error message
+      alert('Failed to update post title');
+    }
+  };
 
   return (
     <div>
-      <h3>{data.name}</h3>
-      <img src={data.sprites.front_default} alt={data.name} />
-      <button onClick={refetch}>Refresh</button>
+      <h3>Current title: {post?.title}</h3>
+      <button onClick={() => handleOptimisticUpdate('New Optimistic Title')}>
+        Update Title Optimistically
+      </button>
     </div>
   );
-}`}
-        </pre>
-      </div>
-      <BackButton />
-    </div>
-  );
-};
-
-export const ReduxWithGraphQLComponent = () => {
-  return (
-    <div className="section">
-      <HomeButton />
-      <h2>Redux with GraphQL</h2>
-      <p>
-        GraphQL and Redux are complementary technologies that can work together effectively.
-        Learn how to integrate GraphQL clients like Apollo with Redux for sophisticated state management.
-      </p>
-
-      <div className="example-box">
-        <h3>Apollo Client with Redux</h3>
-        <pre>
-          {`// apollo-redux-integration.js
-import { ApolloClient, InMemoryCache } from '@apollo/client';
-import { configureStore } from '@reduxjs/toolkit';
-
-// Create the Apollo Client
-const client = new ApolloClient({
-  uri: 'https://api.example.com/graphql',
-  cache: new InMemoryCache()
-});
-
-// Create Redux store with Apollo as a property
-const store = configureStore({
-  reducer: {
-    todos: todosReducer,
-    users: usersReducer,
-    // Other reducers...
-  },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      thunk: {
-        extraArgument: { client } // Make Apollo available in thunks
-      }
-    })
-});
-
-// Now you can use Apollo in your Redux thunks
-const fetchUserWithPosts = (userId) => async (dispatch, getState, { client }) => {
-  dispatch({ type: 'FETCH_USER_REQUEST' });
-  
-  try {
-    const { data } = await client.query({
-      query: GET_USER_WITH_POSTS,
-      variables: { id: userId }
-    });
-    
-    dispatch({ 
-      type: 'FETCH_USER_SUCCESS',
-      payload: data.user
-    });
-  } catch (error) {
-    dispatch({ 
-      type: 'FETCH_USER_FAILURE',
-      payload: error.message
-    });
-  }
 };`}
         </pre>
       </div>
-      <BackButton />
-    </div>
-  );
-};
-
-export const EventSourcingComponent = () => {
-  return (
-    <div className="section">
-      <HomeButton />
-      <h2>Event Sourcing with Redux</h2>
-      <p>
-        Event sourcing is a pattern where state changes are stored as a sequence of events.
-        Redux's architecture makes it ideal for implementing event sourcing principles.
-      </p>
 
       <div className="example-box">
-        <h3>Basic Event Sourcing Implementation</h3>
+        <h4>Advanced Caching Strategies</h4>
         <pre>
-          {`// eventSourcedReducer.js
-// Instead of storing current state, store all events that led to it
-const initialState = {
-  events: [],
-  currentState: { balance: 0 }
-};
-
-// Events describe WHAT HAPPENED, not what should change
-const eventTypes = {
-  MONEY_DEPOSITED: 'MONEY_DEPOSITED',
-  MONEY_WITHDRAWN: 'MONEY_WITHDRAWN',
-  INTEREST_ADDED: 'INTEREST_ADDED'
-};
-
-// Event handlers compute state transitions
-const eventHandlers = {
-  [eventTypes.MONEY_DEPOSITED]: (state, event) => ({
-    ...state,
-    balance: state.balance + event.payload.amount
-  }),
-  [eventTypes.MONEY_WITHDRAWN]: (state, event) => ({
-    ...state,
-    balance: state.balance - event.payload.amount
-  }),
-  [eventTypes.INTEREST_ADDED]: (state, event) => ({
-    ...state,
-    balance: state.balance * (1 + event.payload.rate / 100)
-  })
-};
-
-// Reducer that applies events to rebuild current state
-const bankAccountReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case 'APPLY_EVENT':
-      // Add the event to history
-      const updatedEvents = [...state.events, action.event];
+          {`// Enhanced API slice with advanced caching
+const enhancedApi = api.injectEndpoints({
+  endpoints: (builder) => ({
+    // Search with caching by search term
+    searchPosts: builder.query({
+      query: (searchTerm) => \`posts?q=\${encodeURIComponent(searchTerm)}\`,
       
-      // Apply event handler to compute new current state
-      const handler = eventHandlers[action.event.type];
-      const newCurrentState = handler 
-        ? handler(state.currentState, action.event)
-        : state.currentState;
+      // Keep cached data for 5 minutes
+      keepUnusedDataFor: 300,
       
-      return {
-        events: updatedEvents,
-        currentState: newCurrentState
-      };
-      
-    case 'REBUILD_STATE':
-      // Rebuild entire state from events (e.g., after loading from storage)
-      return {
-        events: action.events,
-        currentState: action.events.reduce((state, event) => {
-          const handler = eventHandlers[event.type];
-          return handler ? handler(state, event) : state;
-        }, { balance: 0 })
-      };
-      
-    default:
-      return state;
-  }
-};
-
-// Action creators that generate events
-export const depositMoney = (amount) => ({
-  type: 'APPLY_EVENT',
-  event: {
-    type: eventTypes.MONEY_DEPOSITED,
-    payload: { amount },
-    timestamp: Date.now()
-  }
-});
-
-export const withdrawMoney = (amount) => ({
-  type: 'APPLY_EVENT',
-  event: {
-    type: eventTypes.MONEY_WITHDRAWN,
-    payload: { amount },
-    timestamp: Date.now()
-  }
-});`}
-        </pre>
-      </div>
-      <BackButton />
-    </div>
-  );
-};
-
-export const ReduxOfflineFirstComponent = () => {
-  return (
-    <div className="section">
-      <HomeButton />
-      <h2>Offline-First Redux Applications</h2>
-      <p>
-        Build resilient applications that work with or without an internet connection
-        by combining Redux with offline-storage solutions and synchronization strategies.
-      </p>
-
-      <div className="example-box">
-        <h3>Setting Up Redux Offline</h3>
-        <pre>
-          {`// configureStore.js
-import { applyMiddleware, createStore, compose } from 'redux';
-import { offline } from '@redux-offline/redux-offline';
-import offlineConfig from '@redux-offline/redux-offline/lib/defaults';
-import rootReducer from './reducers';
-
-// Custom retry strategy
-const customConfig = {
-  ...offlineConfig,
-  effect: (effect, action) => {
-    // Customize how offline actions are processed
-    return fetch(effect.url, {
-      method: effect.method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(effect.body)
-    }).then(res => res.json());
-  },
-  discard: (error, action, retries) => {
-    const { status } = error.response || {};
-    // Don't retry on client errors (4xx)
-    return status >= 400 && status < 500;
-  }
-};
-
-const store = createStore(
-  rootReducer,
-  compose(
-    applyMiddleware(/* your middleware */),
-    offline(customConfig)
-  )
-);
-
-export default store;`}
-        </pre>
-      </div>
-
-      <div className="example-box">
-        <h3>Creating Offline-Ready Actions</h3>
-        <pre>
-          {`// actions.js
-// This action will be queued when offline and sent when online
-export const createTodo = (todo) => ({
-  type: 'CREATE_TODO',
-  payload: todo,
-  meta: {
-    offline: {
-      // Effect describes the API call to make when online
-      effect: {
-        url: 'https://api.example.com/todos',
-        method: 'POST',
-        body: { todo }
+      // Custom cache key generation
+      serializeQueryArgs: ({ queryArgs }) => {
+        return \`search-\${queryArgs?.toLowerCase()}\`;
       },
-      // Optimistic action to update UI immediately
-      commit: { type: 'CREATE_TODO_COMMIT', meta: { todo } },
-      // Action to dispatch if the effect fails
-      rollback: { type: 'CREATE_TODO_ROLLBACK', meta: { todo } }
-    }
-  }
-});
-
-// Reducers handle all phases of the offline action
-const todosReducer = (state = [], action) => {
-  switch (action.type) {
-    case 'CREATE_TODO':
-      // Optimistic update with temporary ID
-      return [...state, { ...action.payload, _id: Date.now(), _synced: false }];
       
-    case 'CREATE_TODO_COMMIT':
-      // Replace temporary ID with server ID
-      return state.map(todo => 
-        todo._id === action.meta.todo._id
-          ? { ...todo, id: action.payload.id, _synced: true }
-          : todo
-      );
+      // Transform and normalize the response
+      transformResponse: (response) => {
+        return {
+          results: response.map(post => ({
+            ...post,
+            searchRelevance: calculateRelevance(post, searchTerm),
+          })),
+          total: response.length,
+          searchTerm,
+        };
+      },
+    }),
+
+    // Infinite scroll pagination
+    getPostsPaginated: builder.query({
+      query: ({ page = 1, limit = 10 }) => 
+        \`posts?_page=\${page}&_limit=\${limit}\`,
       
-    case 'CREATE_TODO_ROLLBACK':
-      // Remove the optimistically added todo or mark as failed
-      return state.map(todo => 
-        todo._id === action.meta.todo._id
-          ? { ...todo, _syncFailed: true }
-          : todo
-      );
-    
-    default:
-      return state;
-  }
-};`}
-        </pre>
-      </div>
-      <BackButton />
-    </div>
-  );
-};
-
-export const ReduxMicroFrontendsComponent = () => {
-  return (
-    <div className="section">
-      <HomeButton />
-      <h2>Redux with Micro Frontends</h2>
-      <p>
-        Learn how to use Redux in micro frontend architectures where multiple teams
-        work on different parts of an application independently.
-      </p>
-
-      <div className="example-box">
-        <h3>Federated Redux Stores</h3>
-        <pre>
-          {`// In a shared library: redux-federation.js
-let globalStore = null;
-
-export const setGlobalStore = (store) => {
-  globalStore = store;
-};
-
-export const getGlobalStore = () => globalStore;
-
-// Function to register a micro frontend's reducers to the global store
-export const registerReducers = (reducers) => {
-  if (!globalStore) {
-    console.error('Global store not initialized');
-    return;
-  }
-  
-  // Use replaceReducer to add new reducers from a micro frontend
-  const currentReducers = globalStore._reducers || {};
-  const nextReducers = { ...currentReducers, ...reducers };
-  
-  // Create a new combined reducer
-  const combinedReducer = combineReducers(nextReducers);
-  
-  // Store the reducers map for future reference
-  globalStore._reducers = nextReducers;
-  
-  // Replace the current reducer with the new combined one
-  globalStore.replaceReducer(combinedReducer);
-};
-
-// Function for a micro frontend to add middleware
-export const addMiddleware = (middleware) => {
-  if (!globalStore || !globalStore.dispatch) {
-    console.error('Global store not properly initialized');
-    return;
-  }
-  
-  // Create new enhancers chain with the additional middleware
-  // Note: This is simplified; in a real app you'd need to handle this differently
-  // since middleware normally needs to be applied during store creation
-  
-  // For this example, we're assuming the store was created with a 
-  // special enhancer that allows dynamic middleware addition
-};`}
-        </pre>
-      </div>
+      // Merge pages for infinite scroll
+      serializeQueryArgs: ({ queryArgs }) => {
+        const { limit } = queryArgs;
+        return \`posts-paginated-\${limit}\`;
+      },
       
-      <div className="example-box">
-        <h3>Host Application Setup</h3>
-        <pre>
-          {`// In the host application: store.js
-import { createStore, combineReducers } from 'redux';
-import { setGlobalStore } from './redux-federation';
-import coreReducers from './reducers';
+      merge: (currentCache, newItems, { arg }) => {
+        if (arg.page === 1) {
+          return newItems;
+        }
+        return [...(currentCache || []), ...newItems];
+      },
+      
+      // Invalidate on a schedule or condition
+      forceRefetch({ currentArg, previousArg }) {
+        return currentArg?.page !== previousArg?.page;
+      },
+    }),
 
-// Create store with initial core reducers
-const rootReducer = combineReducers(coreReducers);
-const store = createStore(
-  rootReducer,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-);
-
-// Store the initial reducers map for future reference
-store._reducers = coreReducers;
-
-// Make the store globally available for micro frontends
-setGlobalStore(store);
-
-export default store;`}
-        </pre>
-      </div>
-
-      <div className="example-box">
-        <h3>Micro Frontend Integration</h3>
-        <pre>
-          {`// In a micro frontend: setup.js
-import { registerReducers, getGlobalStore } from 'shared-library/redux-federation';
-import microFrontendReducers from './reducers';
-
-// Register this micro frontend's reducers with the global store
-registerReducers(microFrontendReducers);
-
-// Now the micro frontend can access the global store
-const globalStore = getGlobalStore();
-
-// Use it in components
-import { Provider } from 'react-redux';
-
-const MicroFrontendRoot = () => (
-  <Provider store={globalStore}>
-    <MicroFrontendApp />
-  </Provider>
-);`}
-        </pre>
-      </div>
-      <BackButton />
-    </div>
-  );
-};
-
-export const ReduxSecurityComponent = () => {
-  return (
-    <div className="section">
-      <HomeButton />
-      <h2>Redux Security Best Practices</h2>
-      <p>
-        Learn how to secure your Redux applications against common vulnerabilities
-        and protect sensitive data in your store.
-      </p>
-
-      <div className="example-box">
-        <h3>Sanitizing Action Payloads</h3>
-        <pre>
-          {`// Middleware to sanitize input data
-import DOMPurify from 'dompurify';
-
-const sanitizeMiddleware = store => next => action => {
-  // Deep sanitize all string values in the action payload
-  const sanitizeData = (data) => {
-    if (!data) return data;
-    
-    if (typeof data === 'string') {
-      return DOMPurify.sanitize(data);
-    }
-    
-    if (Array.isArray(data)) {
-      return data.map(sanitizeData);
-    }
-    
-    if (typeof data === 'object') {
-      return Object.keys(data).reduce((acc, key) => {
-        acc[key] = sanitizeData(data[key]);
-        return acc;
-      }, {});
-    }
-    
-    return data;
-  };
-
-  // Create a sanitized version of the action
-  const sanitizedAction = {
-    ...action,
-    payload: sanitizeData(action.payload)
-  };
-  
-  return next(sanitizedAction);
-};
-
-// Add to your store
-const store = createStore(
-  rootReducer,
-  applyMiddleware(sanitizeMiddleware, /* other middleware */)
-);`}
-        </pre>
-      </div>
-
-      <div className="example-box">
-        <h3>Protecting Sensitive Data</h3>
-        <pre>
-          {`// Sensitive data handling with redux-persist
-import { persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
-import SecureStorage from 'redux-persist-secure-storage';
-import CryptoJS from 'crypto-js';
-
-// Create secure storage for sensitive data
-const secureStorage = new SecureStorage(storage, {
-  encrypt: data => {
-    return CryptoJS.AES.encrypt(data, 'secret_key').toString();
-  },
-  decrypt: data => {
-    return CryptoJS.AES.decrypt(data, 'secret_key').toString(CryptoJS.enc.Utf8);
-  }
-});
-
-// Define which parts of the state are sensitive
-const regularPersistConfig = {
-  key: 'regular',
-  storage: storage,
-  whitelist: ['ui', 'preferences']
-};
-
-const securePersistConfig = {
-  key: 'secure',
-  storage: secureStorage,
-  whitelist: ['auth', 'user', 'payment']
-};
-
-// Create two separate reducers for regular and sensitive data
-const regularReducer = combineReducers({
-  ui: uiReducer,
-  preferences: preferencesReducer
-});
-
-const secureReducer = combineReducers({
-  auth: authReducer,
-  user: userReducer,
-  payment: paymentReducer
-});
-
-// Create persistable versions of each reducer
-const persistedRegularReducer = persistReducer(regularPersistConfig, regularReducer);
-const persistedSecureReducer = persistReducer(securePersistConfig, secureReducer);
-
-// Combine them into the root reducer
-const rootReducer = combineReducers({
-  regular: persistedRegularReducer,
-  secure: persistedSecureReducer
+    // Prefetch related data
+    getPostWithComments: builder.query({
+      query: (postId) => \`posts/\${postId}\`,
+      
+      async onQueryStarted(postId, { dispatch, queryFulfilled }) {
+        // Prefetch comments while post is loading
+        dispatch(api.endpoints.getComments.initiate(postId));
+        
+        try {
+          await queryFulfilled;
+        } catch {
+          // Handle error
+        }
+      },
+    }),
+  }),
+  overrideExisting: false,
 });`}
         </pre>
       </div>
+
+      <h3>Real-time Integration</h3>
+
+      <div className="example-box">
+        <h4>WebSocket Integration</h4>
+        <pre>
+          {`// Real-time posts with WebSocket updates
+const realtimeApi = api.injectEndpoints({
+  endpoints: (builder) => ({
+    getRealtimePosts: builder.query({
+      query: () => 'posts',
+      providesTags: ['Posts'],
+      
+      async onCacheEntryAdded(
+        arg,
+        { updateCachedData, cacheDataLoaded, cacheEntryRemoved }
+      ) {
+        // Wait for initial data to load
+        try {
+          await cacheDataLoaded;
+          
+          // Create WebSocket connection
+          const ws = new WebSocket('wss://api.example.com/posts/live');
+          
+          ws.addEventListener('message', (event) => {
+            const data = JSON.parse(event.data);
+            
+            updateCachedData((draft) => {
+              switch (data.type) {
+                case 'POST_ADDED':
+                  draft.push(data.post);
+                  break;
+                  
+                case 'POST_UPDATED':
+                  const index = draft.findIndex(p => p.id === data.post.id);
+                  if (index !== -1) {
+                    draft[index] = { ...draft[index], ...data.post };
+                  }
+                  break;
+                  
+                case 'POST_DELETED':
+                  return draft.filter(p => p.id !== data.postId);
+                  
+                default:
+                  break;
+              }
+            });
+          });
+          
+          // Cleanup when cache entry is removed
+          await cacheEntryRemoved;
+          ws.close();
+          
+        } catch (error) {
+          console.error('WebSocket connection failed:', error);
+        }
+      },
+    }),
+  }),
+});
+
+// Usage in component
+const RealtimePostsList = () => {
+  const { data: posts, isLoading } = useGetRealtimePostsQuery();
+  
+  return (
+    <div className="realtime-posts">
+      <h2>Live Posts Feed 🔴 LIVE</h2>
+      {isLoading ? (
+        <div>Loading...</div>
+      ) : (
+        <div className="posts-feed">
+          {posts?.map(post => (
+            <div key={post.id} className="live-post">
+              <h3>{post.title}</h3>
+              <p>{post.body}</p>
+              <small>By User {post.userId} • {post.timestamp}</small>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};`}
+        </pre>
+      </div>
+
+      <h3>Testing RTK Query</h3>
+
+      <div className="example-box">
+        <h4>Testing Components with RTK Query</h4>
+        <pre>
+          {`// PostsList.test.js
+import React from 'react';
+import { render, screen, waitFor } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import { api } from '../services/api';
+import PostsList from '../components/PostsList';
+
+// Mock data
+const mockPosts = [
+  { id: 1, title: 'Test Post 1', body: 'Content 1', userId: 1 },
+  { id: 2, title: 'Test Post 2', body: 'Content 2', userId: 2 },
+];
+
+// Helper to create store with preloaded state
+const createTestStore = (preloadedState = {}) => {
+  return configureStore({
+    reducer: {
+      [api.reducerPath]: api.reducer,
+    },
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().concat(api.middleware),
+    preloadedState,
+  });
+};
+
+// Test with mocked successful response
+test('displays posts when API call succeeds', async () => {
+  // Create store with mocked data
+  const store = createTestStore({
+    api: {
+      queries: {
+        'getPosts(undefined)': {
+          status: 'fulfilled',
+          data: mockPosts,
+        },
+      },
+    },
+  });
+
+  render(
+    <Provider store={store}>
+      <PostsList />
+    </Provider>
+  );
+
+  // Wait for posts to appear
+  await waitFor(() => {
+    expect(screen.getByText('Test Post 1')).toBeInTheDocument();
+    expect(screen.getByText('Test Post 2')).toBeInTheDocument();
+  });
+});
+
+// Test with mocked error response
+test('displays error when API call fails', async () => {
+  const store = createTestStore({
+    api: {
+      queries: {
+        'getPosts(undefined)': {
+          status: 'rejected',
+          error: { message: 'Network Error' },
+        },
+      },
+    },
+  });
+
+  render(
+    <Provider store={store}>
+      <PostsList />
+    </Provider>
+  );
+
+  await waitFor(() => {
+    expect(screen.getByText(/Error loading posts/)).toBeInTheDocument();
+    expect(screen.getByText(/Network Error/)).toBeInTheDocument();
+  });
+});`}
+        </pre>
+      </div>
+
+      <h3>Performance Best Practices</h3>
+
+      <div className="explanation-box">
+        <h4>Optimization Techniques</h4>
+        <ul>
+          <li><strong>Selective Subscriptions:</strong> Use <code>selectFromResult</code> to subscribe to only specific parts of query results</li>
+          <li><strong>Query Splitting:</strong> Split large queries into smaller, more focused ones</li>
+          <li><strong>Prefetching:</strong> Use <code>dispatch(api.util.prefetch())</code> to load data before it's needed</li>
+          <li><strong>Cache Management:</strong> Configure appropriate <code>keepUnusedDataFor</code> values</li>
+          <li><strong>Request Deduplication:</strong> RTK Query automatically deduplicates identical requests</li>
+        </ul>
+      </div>
+
+      <div className="example-box">
+        <h4>Performance Monitoring</h4>
+        <pre>
+          {`// Custom hook for performance monitoring
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+
+export const useRTKQueryStats = () => {
+  const queryState = useSelector(state => state.api.queries);
+  
+  useEffect(() => {
+    const stats = Object.values(queryState).reduce((acc, query) => {
+      acc.total++;
+      if (query.status === 'pending') acc.pending++;
+      if (query.status === 'fulfilled') acc.fulfilled++;
+      if (query.status === 'rejected') acc.rejected++;
+      return acc;
+    }, { total: 0, pending: 0, fulfilled: 0, rejected: 0 });
+    
+    console.log('RTK Query Stats:', stats);
+  }, [queryState]);
+  
+  return queryState;
+};
+
+// Performance monitoring component
+const QueryStatsMonitor = () => {
+  const stats = useRTKQueryStats();
+  
+  return (
+    <div className="query-stats">
+      <h4>Query Performance</h4>
+      <p>Active Queries: {Object.keys(stats).length}</p>
+      <p>Cache Size: {JSON.stringify(stats).length} bytes</p>
+    </div>
+  );
+};`}
+        </pre>
+      </div>
+
+      <h3>Migration Guide</h3>
+
+      <div className="explanation-box">
+        <h4>Migrating from Traditional Redux</h4>
+        <p>Here's how to gradually migrate from traditional Redux patterns to RTK Query:</p>
+        
+        <div className="migration-steps">
+          <div className="step">
+            <h5>Step 1: Identify Data Fetching Logic</h5>
+            <p>Look for thunks, sagas, or other async logic that fetches server data</p>
+          </div>
+          
+          <div className="step">
+            <h5>Step 2: Create API Slices</h5>
+            <p>Replace fetch logic with RTK Query endpoints</p>
+          </div>
+          
+          <div className="step">
+            <h5>Step 3: Update Components</h5>
+            <p>Replace useSelector + useEffect patterns with RTK Query hooks</p>
+          </div>
+          
+          <div className="step">
+            <h5>Step 4: Remove Old Code</h5>
+            <p>Clean up old reducers, actions, and async logic</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="comparison-table">
+        <h4>Before vs After Migration</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Traditional Redux</th>
+              <th>RTK Query</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <pre>{`// Actions
+const FETCH_POSTS_REQUEST = 'FETCH_POSTS_REQUEST';
+const FETCH_POSTS_SUCCESS = 'FETCH_POSTS_SUCCESS';
+const FETCH_POSTS_FAILURE = 'FETCH_POSTS_FAILURE';
+
+// Thunk
+const fetchPosts = () => async (dispatch) => {
+  dispatch({ type: FETCH_POSTS_REQUEST });
+  try {
+    const response = await fetch('/api/posts');
+    const data = await response.json();
+    dispatch({ type: FETCH_POSTS_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({ type: FETCH_POSTS_FAILURE, payload: error.message });
+  }
+};
+
+// Reducer
+const postsReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case FETCH_POSTS_REQUEST:
+      return { ...state, loading: true };
+    case FETCH_POSTS_SUCCESS:
+      return { ...state, loading: false, data: action.payload };
+    case FETCH_POSTS_FAILURE:
+      return { ...state, loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+// Component
+const PostsList = () => {
+  const { data, loading, error } = useSelector(state => state.posts);
+  const dispatch = useDispatch();
+  
+  useEffect(() => {
+    dispatch(fetchPosts());
+  }, [dispatch]);
+  
+  // Rest of component...
+};`}</pre>
+              </td>
+              <td>
+                <pre>{`// API Slice
+const api = createApi({
+  reducerPath: 'api',
+  baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
+  endpoints: (builder) => ({
+    getPosts: builder.query({
+      query: () => 'posts',
+    }),
+  }),
+});
+
+// Component  
+const PostsList = () => {
+  const { data, isLoading, error } = useGetPostsQuery();
+  
+  // Rest of component...
+};`}</pre>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Common Patterns & Recipes</h3>
+
+      <div className="example-box">
+        <h4>Authentication Integration</h4>
+        <pre>
+          {`// Auth-aware API configuration
+const baseQueryWithAuth = fetchBaseQuery({
+  baseUrl: '/api',
+  prepareHeaders: (headers, { getState }) => {
+    const token = getState().auth.token;
+    if (token) {
+      headers.set('authorization', \`Bearer \${token}\`);
+    }
+    return headers;
+  },
+});
+
+const baseQueryWithReauth = async (args, api, extraOptions) => {
+  let result = await baseQueryWithAuth(args, api, extraOptions);
+  
+  if (result.error && result.error.status === 401) {
+    // Try to refresh token
+    const refreshResult = await baseQueryWithAuth(
+      '/auth/refresh', 
+      api, 
+      extraOptions
+    );
+    
+    if (refreshResult.data) {
+      api.dispatch(tokenReceived(refreshResult.data));
+      // Retry the original query
+      result = await baseQueryWithAuth(args, api, extraOptions);
+    } else {
+      api.dispatch(loggedOut());
+    }
+  }
+  
+  return result;
+};`}
+        </pre>
+      </div>
+
+      <div className="warning-box">
+        <h4>Common Gotchas</h4>
+        <ul>
+          <li><strong>Don't overuse RTK Query:</strong> It's designed for server state, not client state</li>
+          <li><strong>Cache key serialization:</strong> Be careful with object arguments that might not serialize consistently</li>
+          <li><strong>Tag invalidation:</strong> Make sure your tag strategies don't cause unnecessary refetches</li>
+          <li><strong>Memory usage:</strong> Monitor cache size in long-running applications</li>
+          <li><strong>Error handling:</strong> Always handle network errors and edge cases</li>
+        </ul>
+      </div>
+
       <BackButton />
     </div>
   );

@@ -22,6 +22,7 @@ const menuItems = [
       { to: '/concepts/redux-thunk', icon: '🔀', text: 'Redux Thunk' },
       { to: '/concepts/redux-saga', icon: '🧬', text: 'Redux Saga' },
       { to: '/concepts/redux-observable', icon: '🔭', text: 'Redux Observable' },
+      { to: '/concepts/websockets', icon: '🔄', text: 'WebSockets' }
     ]
   },
   {
@@ -33,16 +34,16 @@ const menuItems = [
       { to: '/concepts/redux-toolkit', icon: '🧰', text: 'Redux Toolkit' },
       { to: '/concepts/redux-persist', icon: '💾', text: 'Redux Persist' },
       { to: '/concepts/rtk-query', icon: '📡', text: 'RTK Query' },
+      { to: '/concepts/entity-relationships', icon: '🔗', text: 'Entity Relationships' },
+      { to: '/concepts/architecture-patterns', icon: '🏗️', text: 'Architecture Patterns' },
     ]
   },
+  // Add Specialized Patterns category to sidebar
   {
-    category: 'Modern Patterns',
+    category: 'Specialized Patterns',
     items: [
-      { to: '/concepts/redux-graphql', icon: '🔗', text: 'Redux with GraphQL' },
-      { to: '/concepts/event-sourcing', icon: '📝', text: 'Event Sourcing' },
-      { to: '/concepts/offline-first', icon: '🔌', text: 'Offline-First' },
-      { to: '/concepts/micro-frontends', icon: '🧩', text: 'Micro Frontends' },
-      { to: '/concepts/redux-security', icon: '🔒', text: 'Security Practices' },
+      { to: '/concepts/bff-pattern', icon: '🔌', text: 'Backend-for-Frontend' },
+      // Add more specialized patterns here as they are created
     ]
   },
   {
@@ -52,7 +53,7 @@ const menuItems = [
       { to: '/concepts/testing-redux', icon: '🧪', text: 'Testing Redux' },
       { to: '/concepts/typescript', icon: '📘', text: 'TypeScript Integration' },
       { to: '/concepts/ssr', icon: '🖥️', text: 'Server-Side Rendering' },
-      { to: '/concepts/architecture-patterns', icon: '🏗️', text: 'Architecture Patterns' },
+      { to: '/concepts/dynamic-reducers', icon: '📦', text: 'Dynamic Reducers' },
     ]
   }
 ];

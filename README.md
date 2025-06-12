@@ -87,6 +87,47 @@ This project also covers advanced Redux concepts:
 - State machines with Redux
 - Form management strategies
 
+## Additional Redux Topics to Explore
+
+Here are more advanced topics to deepen your Redux knowledge:
+
+### Integration & Migration
+- Redux with React Native - Mobile-specific patterns and optimizations
+- Redux with Next.js - Integration with server components and app router
+- Migrating from Context API to Redux - When and how to upgrade
+- Migrating legacy Redux to Redux Toolkit - Modernization strategies
+- Redux in monorepo architectures - Sharing Redux logic across applications
+
+### Advanced Testing & Debugging
+- Redux Saga testing patterns - Testing complex asynchronous flows
+- Time-travel debugging advanced techniques - Practical usage scenarios
+- Redux DevTools extension customization - Creating custom monitors
+- Redux performance profiling - Identifying and fixing bottlenecks
+- Visualization of state changes - Custom visualizers for complex state
+
+### Specialized Patterns
+- Backend-for-Frontend (BFF) pattern with Redux
+- Advanced undo/redo functionality - Implementing application-wide time travel
+- Permission-based Redux state - Handling role-based access control
+- Feature flags and A/B testing integration with Redux
+- Domain-driven design (DDD) with Redux - Strategic and tactical patterns
+- Redux and finite state machines - Combining with XState for complex workflows
+- Multi-tenant applications - Isolating state in multi-tenant systems
+- Internationalization and localization patterns
+
+### Extending Redux
+- Custom Redux middleware development - Advanced patterns and use cases
+- Higher-order reducers - Enhancing reducers with cross-cutting concerns
+- Redux enhancers - Beyond middleware for store customization
+- Meta-reducers - Reducers that operate on other reducers
+- Custom serialization and persistence strategies
+
+### Performance & Scale
+- Large-scale Redux architecture - Patterns for enterprise applications
+- Redux sharding - Strategies for very large state trees
+- Optimizing selector performance - Advanced memoization techniques
+- Worker thread integration - Offloading Redux operations
+
 ## Learn More
 
 - [React documentation](https://reactjs.org/)

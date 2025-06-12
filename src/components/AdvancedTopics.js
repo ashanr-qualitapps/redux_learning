@@ -9,8 +9,11 @@ import thunk from 'redux-thunk';
 import produce from 'immer';
 import { HomeButton, BackButton } from './NavigationButtons';
 
+// Import BFFPatternComponent correctly
+import BFFPatternComponent from './SpecializedPatterns/BFFPatternComponent';
+
 // 1. Advanced: Caching with re-reselect
-export const ReReselectComponent = () => {
+const ReReselectComponent = () => {
   return (
     <div className="section">
       <HomeButton />
@@ -77,7 +80,7 @@ const user2 = useSelector(state => getUserById(state, 'user2'));`}</pre>
 };
 
 // 2. Code Splitting and Dynamic Reducers
-export const DynamicReducersComponent = () => {
+const DynamicReducersComponent = () => {
   return (
     <div className="section">
       <HomeButton />
@@ -191,7 +194,7 @@ export default withReducer('posts', postsReducer)(Posts);`}</pre>
 };
 
 // 3. Redux Toolkit
-export const ReduxToolkitComponent = () => {
+const ReduxToolkitComponent = () => {
   return (
     <div className="section">
       <HomeButton />
@@ -354,7 +357,7 @@ export const PostsList = () => {
 };
 
 // 4. Immutable Update Patterns
-export const ImmutablePatternsComponent = () => {
+const ImmutablePatternsComponent = () => {
   return (
     <div className="section">
       <HomeButton />
@@ -490,7 +493,7 @@ const complexReducerWithImmer = (state = initialState, action) => {
 };
 
 // 5. Testing Redux Logic
-export const TestingReduxComponent = () => {
+const TestingReduxComponent = () => {
   return (
     <div className="section">
       <HomeButton />
@@ -702,7 +705,7 @@ describe('PostsList Component', () => {
 };
 
 // 6. Integration with TypeScript
-export const TypeScriptIntegrationComponent = () => {
+const TypeScriptIntegrationComponent = () => {
   return (
     <div className="section">
       <HomeButton />
@@ -968,7 +971,7 @@ export const PostsList: React.FC = () => {
 };
 
 // 7. Server-Side Rendering (SSR) with Redux
-export const SSRReduxComponent = () => {
+const SSRReduxComponent = () => {
   return (
     <div className="section">
       <HomeButton />
@@ -1182,7 +1185,7 @@ app.get('*', async (req, res) => {
 };
 
 // 8. Entity Relationships
-export const EntityRelationshipsComponent = () => {
+const EntityRelationshipsComponent = () => {
   return (
     <div className="section">
       <HomeButton />
@@ -1395,7 +1398,7 @@ function removePostWithComments(postId) {
 };
 
 // 9. Redux with WebSockets
-export const WebSocketsComponent = () => {
+const WebSocketsComponent = () => {
   return (
     <div className="section">
       <HomeButton />
@@ -1725,4 +1728,17 @@ const websocketMiddleware = () => {
       <BackButton />
     </div>
   );
+};
+
+export {
+  ReReselectComponent,
+  DynamicReducersComponent,
+  ReduxToolkitComponent,
+  ImmutablePatternsComponent,
+  TestingReduxComponent,
+  TypeScriptIntegrationComponent,
+  SSRReduxComponent,
+  EntityRelationshipsComponent,
+  WebSocketsComponent,
+  BFFPatternComponent
 };

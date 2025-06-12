@@ -28,6 +28,8 @@ import { ReselectComponent, BasicReselectComponent, ParameterizedSelectorsCompon
 import { ReduxPersistComponent } from './components/PersistComponents';
 import './index.css';
 import './styles.css';
+// Add import for specialized patterns CSS
+import './components/SpecializedPatterns/specializedPatterns.css';
 
 // Import our new advanced topic components
 import { 
@@ -39,7 +41,9 @@ import {
   TypeScriptIntegrationComponent,
   SSRReduxComponent,
   EntityRelationshipsComponent,
-  WebSocketsComponent
+  WebSocketsComponent,
+  // Import the BFFPatternComponent
+  BFFPatternComponent
 } from './components/AdvancedTopics';
 import { ReduxArchitecturePatternsComponent } from './components/ArchitecturePatternsComponent';
 
@@ -214,6 +218,14 @@ const advancedReduxTopics = [
     description: 'Powerful data fetching and caching for Redux applications',
     category: 'advanced', // Change from 'middleware' to 'advanced'
     order: 23
+  },
+  {
+    id: 'bff-pattern',
+    concept: 'Backend-for-Frontend Pattern',
+    description: 'Optimizing backend services for specific frontend applications with Redux',
+    category: 'specialized',  // Change from 'advanced' to 'specialized'
+    date: '2025-07-05',
+    order: 24
   }
 ];
 
@@ -281,11 +293,12 @@ const ConceptTable = ({ allConcepts }) => {
   }, {});
 
   // Define the display order and labels for categories
-  const categoryOrder = ['core', 'middleware', 'advanced', 'normalization', 'reselect', 'implementation'];
+  const categoryOrder = ['core', 'middleware', 'advanced', 'specialized', 'normalization', 'reselect', 'implementation'];
   const categoryLabels = {
     core: 'Core Redux Concepts',
     middleware: 'Middleware Solutions',
     advanced: 'Advanced Concepts',
+    specialized: 'Specialized Patterns',
     normalization: 'Normalization Techniques',
     reselect: 'Reselect Techniques',
     implementation: 'Advanced Implementation Patterns'
@@ -405,6 +418,9 @@ const App = () => {
               
               {/* Make sure RTK Query route is properly defined */}
               <Route path="/concepts/rtk-query" element={<RTKQueryComponent />} />
+              
+              {/* Add BFF Pattern Route */}
+              <Route path="/concepts/bff-pattern" element={<BFFPatternComponent />} />
             </Routes>
           </Layout>
         </Router>

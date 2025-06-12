@@ -1,0 +1,60 @@
+/* BFF Pattern Component Styles */
+.architecture-diagram {
+  display: flex;
+  gap: 2rem;
+  margin: 1.5rem 0;
+  justify-content: space-between;
+}
+
+.traditional, .bff {
+  flex: 1;
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: var(--bg-code);
+}
+
+.traditional pre, .bff pre {
+  margin: 1rem 0;
+  white-space: pre;
+  font-family: monospace;
+}
+
+.comparison {
+  display: flex;
+  gap: 2rem;
+  margin: 1.5rem 0;
+}
+
+.compare-item {
+  flex: 1;
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: var(--bg-muted);
+}
+
+.subsection {
+  margin-bottom: 2rem;
+}
+
+.warning-box {
+  background-color: rgba(255, 200, 0, 0.1);
+  border-left: 4px solid #ffc107;
+  padding: 1rem;
+  margin: 1.5rem 0;
+  border-radius: 4px;
+}
+
+.code-explanation {
+  margin-top: 1.5rem;
+}
+
+.code-block {
+  background-color: var(--bg-code);
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-family: monospace;
+  white-space: pre;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
