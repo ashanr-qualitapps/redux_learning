@@ -413,7 +413,7 @@ endpoints: (builder) => ({
             <li>Query endpoints "provide" tags for the data they return using <code>providesTags</code></li>
             <li>Mutation endpoints can "invalidate" tags using <code>invalidatesTags</code></li>
             <li>When a tag is invalidated, all queries that provide that tag are automatically re-fetched</li>
-            <li>Tags can be either string literals (<code>'Posts'</code>) or objects (<code>{ type: 'Post', id: 5 }</code>)</li>
+            <li>Tags can be either string literals (<code>'Posts'</code>) or objects (<code>{'{'} type: 'Post', id: 5 {'}'}</code>)</li>
             <li>Using object tags allows for more precise control over invalidation</li>
           </ol>
         </div>

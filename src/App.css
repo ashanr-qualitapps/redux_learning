@@ -1,0 +1,109 @@
+.App {
+  text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.App-header {
+  background-color: #282c34;
+  padding: 20px;
+  color: white;
+  margin-bottom: 30px;
+  border-radius: 5px;
+}
+
+.section {
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: left;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.key-points {
+  background-color: #e9f7fe;
+  border-left: 4px solid #3498db;
+  padding: 15px;
+  margin: 20px 0;
+}
+
+.example-box {
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin: 15px 0;
+  padding: 15px;
+}
+
+.live-editor-container {
+  background-color: #f1f1f1;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  overflow: auto;
+}
+
+.code-explanation {
+  background-color: #fffde7;
+  border-left: 4px solid #ffd600;
+  padding: 10px 15px;
+  margin-top: 10px;
+}
+
+.rtk-query-diagram {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0;
+  text-align: center;
+}
+
+.diagram-box {
+  width: 80%;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+}
+
+.component { background-color: #bbdefb; }
+.query-hook { background-color: #c5cae9; }
+.cache { background-color: #d1c4e9; }
+.endpoint { background-color: #e1bee7; }
+.fetch { background-color: #f8bbd0; }
+
+.diagram-arrow {
+  font-size: 20px;
+  margin: 5px 0;
+}
+
+.explanation-box {
+  background-color: #f1f8e9;
+  border: 1px solid #c5e1a5;
+  border-radius: 5px;
+  padding: 15px;
+  margin: 15px 0;
+}
+
+.warning-box {
+  background-color: #fff3e0;
+  border-left: 4px solid #ff9800;
+  padding: 15px;
+  margin: 15px 0;
+}
+
+.comparison-table table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 15px 0;
+}
+
+.comparison-table th, .comparison-table td {
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.comparison-table th {
+  background-color: #f2f2f2;
+}

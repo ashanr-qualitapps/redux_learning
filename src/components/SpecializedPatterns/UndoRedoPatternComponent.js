@@ -3,6 +3,9 @@ import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
 import { HomeButton, BackButton } from '../NavigationButtons';
 
 const UndoRedoPatternComponent = () => {
+  // Add debugging message
+  console.log('UndoRedoPatternComponent rendered');
+  
   // Scope for react-live code examples
   const scope = { React };
 

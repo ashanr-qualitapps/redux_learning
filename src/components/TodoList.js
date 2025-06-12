@@ -29,7 +29,7 @@ const TodoList = () => {
           type="text"
           value={newTodo}
           onChange={(e) => setNewTodo(e.target.value)}
-          onKeyPress={handleKeyPress}
+          onKeyDown={handleKeyPress}
           placeholder="Add a new todo"
           className="todo-input"
         />

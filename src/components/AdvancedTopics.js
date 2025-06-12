@@ -4,7 +4,8 @@ import { createSelector } from 'reselect';
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import { renderToString } from 'react-dom/server';
-import { StaticRouter } from 'react-router-dom';
+// Update the StaticRouter import for React Router v6
+import { StaticRouter } from 'react-router-dom/server';
 import thunk from 'redux-thunk';
 import produce from 'immer';
 import { HomeButton, BackButton } from './NavigationButtons';
