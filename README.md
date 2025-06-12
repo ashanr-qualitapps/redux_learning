@@ -71,6 +71,12 @@ This project also covers advanced Redux concepts:
 - Normalization of state
 - Memoized selectors with Reselect
 - Advanced caching with re-reselect
+- RTK Query for data fetching and caching
+- Redux with GraphQL integration
+- Event Sourcing with Redux
+- Offline-First Redux Applications
+- Redux in Micro Frontends
+- Security Best Practices for Redux
 - Feature-Sliced Design pattern
 - Ducks pattern
 - Redux modules
@@ -86,6 +92,8 @@ This project also covers advanced Redux concepts:
 - [React documentation](https://reactjs.org/)
 - [Redux documentation](https://redux.js.org/)
 - [React Redux documentation](https://react-redux.js.org/)
+- [Redux Toolkit documentation](https://redux-toolkit.js.org/)
+- [RTK Query documentation](https://redux-toolkit.js.org/rtk-query/overview)
 - [Redux Persist documentation](https://github.com/rt2zz/redux-persist)
 - [Feature Sliced Design](https://feature-sliced.design/)
 - [XState (for state machines)](https://xstate.js.org/)

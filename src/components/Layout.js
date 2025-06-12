@@ -32,6 +32,17 @@ const menuItems = [
       { to: '/concepts/re-reselect', icon: '🔎', text: 'Re-reselect' },
       { to: '/concepts/redux-toolkit', icon: '🧰', text: 'Redux Toolkit' },
       { to: '/concepts/redux-persist', icon: '💾', text: 'Redux Persist' },
+      { to: '/concepts/rtk-query', icon: '📡', text: 'RTK Query' },
+    ]
+  },
+  {
+    category: 'Modern Patterns',
+    items: [
+      { to: '/concepts/redux-graphql', icon: '🔗', text: 'Redux with GraphQL' },
+      { to: '/concepts/event-sourcing', icon: '📝', text: 'Event Sourcing' },
+      { to: '/concepts/offline-first', icon: '🔌', text: 'Offline-First' },
+      { to: '/concepts/micro-frontends', icon: '🧩', text: 'Micro Frontends' },
+      { to: '/concepts/redux-security', icon: '🔒', text: 'Security Practices' },
     ]
   },
   {

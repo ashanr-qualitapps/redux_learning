@@ -5,7 +5,24 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import store, { persistor } from './redux/store';
 import Layout from './components/Layout';
-import { ActionsComponent, ReducersComponent, StoreComponent, HooksComponent, ThunksComponent, MiddlewareComponent, ReduxThunkComponent, ReduxSagaComponent, ReduxObservableComponent } from './components/TopicComponents';
+import { 
+  ActionsComponent, 
+  ReducersComponent, 
+  StoreComponent, 
+  HooksComponent, 
+  ThunksComponent, 
+  MiddlewareComponent, 
+  ReduxThunkComponent, 
+  ReduxSagaComponent, 
+  ReduxObservableComponent,
+  // Re-export RTK Query component
+  RTKQueryComponent,
+  ReduxWithGraphQLComponent,
+  EventSourcingComponent,
+  ReduxOfflineFirstComponent,
+  ReduxMicroFrontendsComponent,
+  ReduxSecurityComponent
+} from './components/TopicComponents';
 import { NormalizationComponent, ManualNormalizationComponent, NormalizrComponent, EntityAdapterComponent } from './components/NormalizationComponents';
 import { ReselectComponent, BasicReselectComponent, ParameterizedSelectorsComponent, FilteringTodosComponent } from './components/ReselectComponents';
 import { ReduxPersistComponent } from './components/PersistComponents';
@@ -189,6 +206,14 @@ const advancedReduxTopics = [
     category: 'middleware',
     date: '2025-05-29',
     order: 22
+  },
+  {
+    id: 'rtk-query',
+    concept: 'RTK Query',
+     date: '2025-06-09',
+    description: 'Powerful data fetching and caching for Redux applications',
+    category: 'advanced', // Change from 'middleware' to 'advanced'
+    order: 23
   }
 ];
 
@@ -377,6 +402,9 @@ const App = () => {
               
               {/* Add Architecture Patterns Route */}
               <Route path="/concepts/architecture-patterns" element={<ReduxArchitecturePatternsComponent />} />
+              
+              {/* Make sure RTK Query route is properly defined */}
+              <Route path="/concepts/rtk-query" element={<RTKQueryComponent />} />
             </Routes>
           </Layout>
         </Router>

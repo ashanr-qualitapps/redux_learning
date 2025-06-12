@@ -369,7 +369,9 @@ render(() => {
               "Powerful debugging tools",
               "Middleware for complex logic",
               "Time-travel debugging",
-              "Predictable state updates"
+              "Predictable state updates",
+              "Side effect handling",
+              "Intercepting and transforming actions"
             ],
             drawbacks: [
               "More boilerplate code",

@@ -11,7 +11,9 @@ export const ReduxFlowDiagram = () => {
         
         {/* Middleware */}
         <rect x="250" y="140" width="120" height="100" rx="8" fill="#ffffcc" stroke="#cccc00" strokeWidth="2" />
-        <text x="310" y="190" textAnchor="middle" fontWeight="bold">Middleware</text>
+        <text x="310" y="175" textAnchor="middle" fontWeight="bold">Middleware</text>
+        <text x="310" y="195" textAnchor="middle" fontSize="10">Intercepts Actions</text>
+        <text x="310" y="215" textAnchor="middle" fontSize="10">Handles Side Effects</text>
         
         {/* Reducer */}
         <rect x="450" y="160" width="120" height="60" rx="8" fill="#ccffcc" stroke="#00cc00" strokeWidth="2" />

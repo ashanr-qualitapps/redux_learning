@@ -22,6 +22,42 @@ const initialState = {
       description: 'Effective ways to organize and structure your Redux codebase for better maintainability',
       category: 'advanced',
       date: '2025-06-03'
+    },
+    // New React-Redux integration topics
+    {
+      id: 'context-vs-redux',
+      title: 'React Context vs Redux',
+      description: 'When to use React Context API versus Redux for state management',
+      category: 'react-integration',
+      date: '2025-06-10'
+    },
+    {
+      id: 'react-redux-performance',
+      title: 'React-Redux Performance',
+      description: 'Performance optimization techniques for React components with Redux',
+      category: 'react-integration',
+      date: '2025-06-12'
+    },
+    {
+      id: 'custom-redux-hooks',
+      title: 'Custom Redux Hooks',
+      description: 'Creating reusable custom hooks that encapsulate Redux logic',
+      category: 'react-integration',
+      date: '2025-06-15'
+    },
+    {
+      id: 'redux-router-integration',
+      title: 'Redux and React Router',
+      description: 'Best practices for connecting Redux state to routing in React applications',
+      category: 'react-integration',
+      date: '2025-06-18'
+    },
+    {
+      id: 'redux-suspense',
+      title: 'Redux with React Suspense',
+      description: 'Integrating Redux with React Suspense for improved user experience',
+      category: 'advanced-react',
+      date: '2025-06-20'
     }
   ],
   loading: false,
